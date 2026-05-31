@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bot-Konfigurator · Anfragen-Werk · JAYAMO AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#06060a;--bg2:#0d0d14;--bg3:#13131e;
+  --card:#111118;--card2:#181820;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);
+  --yellow:#fbe24a;--yellow2:#ffe566;--yellow-dim:rgba(251,226,74,0.07);
+  --fg:#eeeef4;--fg2:#9090a8;--fg3:#55556a;--fg4:#33333f;
+  --green:#3ddc84;--green-dim:rgba(61,220,132,0.1);
+  --red:#ff6b6b;--red-dim:rgba(255,107,107,0.08);
+  --font-head:'Syne',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+  --font-body:'DM Sans',sans-serif;
+  --r:10px;--r2:16px;--r3:24px;
+}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font-body);background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(251,226,74,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(251,226,74,0.02) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;height:56px;display:flex;align-items:center;background:rgba(6,6,10,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-inner{max-width:1100px;width:100%;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.nav-logo-mark{width:26px;height:26px;background:var(--yellow);border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:11px;font-weight:800;color:#06060a;}
+.nav-logo-text{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--fg);}
+.nav-logo-text span{color:var(--yellow);}
+.nav-badge{font-family:var(--font-mono);font-size:10px;color:var(--fg3);background:var(--card2);border:1px solid var(--border);padding:4px 10px;border-radius:100px;}
+
+/* LAYOUT */
+.layout{max-width:1100px;margin:0 auto;padding:32px 24px 80px;display:grid;grid-template-columns:1fr 1fr;gap:24px;position:relative;z-index:1;align-items:start;}
+
+/* PANEL */
+.panel{background:var(--card);border:1px solid var(--border2);border-radius:var(--r3);overflow:hidden;}
+.panel-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);background:var(--card2);display:flex;align-items:center;justify-content:space-between;}
+.panel-title{font-family:var(--font-head);font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--fg2);display:flex;align-items:center;gap:8px;}
+.panel-title-dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);}
+.panel-body{padding:24px;}
+
+/* PROGRESS */
+.progress-wrap{margin-bottom:24px;}
+.progress-steps{display:flex;gap:4px;margin-bottom:8px;}
+.progress-step{flex:1;height:3px;border-radius:99px;background:var(--border2);transition:background .3s;}
+.progress-step.active{background:var(--yellow);}
+.progress-step.done{background:rgba(251,226,74,0.35);}
+.progress-label{font-family:var(--font-mono);font-size:10px;color:var(--fg3);display:flex;justify-content:space-between;}
+
+/* SECTIONS */
+.section{display:none;}
+.section.active{display:block;}
+.section-eye{font-family:var(--font-mono);font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--yellow);margin-bottom:6px;}
+.section-title{font-family:var(--font-head);font-size:22px;font-weight:700;letter-spacing:-.01em;color:var(--fg);margin-bottom:4px;}
+.section-sub{font-size:13px;color:var(--fg2);margin-bottom:24px;line-height:1.55;font-weight:300;}
+
+/* FIELDS */
+.field{margin-bottom:16px;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.field-label{display:flex;align-items:center;justify-content:space-between;font-family:var(--font-mono);font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--fg3);margin-bottom:7px;}
+.field-required{color:var(--yellow);font-size:10px;}
+.field-hint{font-size:10px;color:var(--fg4);text-transform:none;letter-spacing:0;font-family:var(--font-body);}
+.field input,.field select,.field textarea{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:11px 14px;font-family:var(--font-body);font-size:14px;color:var(--fg);outline:none;transition:border-color .15s,background .15s;resize:none;}
+.field input::placeholder,.field textarea::placeholder{color:var(--fg4);}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(251,226,74,.45);background:rgba(251,226,74,.02);}
+.field select option{background:#13131e;}
+.field textarea{min-height:80px;line-height:1.55;}
+
+/* COLOR PICKER */
+.color-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;}
+.color-swatch{width:32px;height:32px;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:all .15s;position:relative;flex-shrink:0;}
+.color-swatch.selected{border-color:var(--fg);transform:scale(1.1);}
+.color-swatch.selected::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
+.color-custom{width:100%;height:36px;border:1px solid var(--border2);border-radius:8px;background:var(--bg3);cursor:pointer;padding:2px;margin-top:8px;}
+
+/* PLATFORM GRID */
+.platform-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.platform-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:10px;}
+.platform-item:hover{border-color:var(--border2);}
+.platform-item.selected{border-color:rgba(251,226,74,.4);background:rgba(251,226,74,.06);}
+.platform-item input[type="radio"]{display:none;}
+.platform-icon{font-size:18px;flex-shrink:0;}
+.platform-name{font-size:13px;color:var(--fg2);font-weight:500;}
+.platform-item.selected .platform-name{color:var(--fg);}
+
+/* FAQ */
+.faq-list{display:flex;flex-direction:column;gap:10px;margin-bottom:12px;}
+.faq-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:14px;}
+.faq-item-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.faq-n{font-family:var(--font-mono);font-size:10px;font-weight:500;color:var(--yellow);background:var(--yellow-dim);border:1px solid rgba(251,226,74,.2);padding:3px 8px;border-radius:4px;white-space:nowrap;}
+.faq-remove{margin-left:auto;background:transparent;border:none;color:var(--fg4);cursor:pointer;font-size:16px;padding:2px 6px;border-radius:4px;transition:all .15s;line-height:1;}
+.faq-remove:hover{color:var(--red);background:var(--red-dim);}
+.faq-item input,.faq-item textarea{width:100%;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--font-body);font-size:13px;color:var(--fg);outline:none;transition:border-color .15s;resize:none;margin-bottom:8px;}
+.faq-item input:last-child,.faq-item textarea:last-child{margin-bottom:0;}
+.faq-item input::placeholder,.faq-item textarea::placeholder{color:var(--fg4);}
+.faq-item input:focus,.faq-item textarea:focus{border-color:rgba(251,226,74,.4);}
+.faq-add-btn{width:100%;background:transparent;border:1px dashed var(--border2);border-radius:var(--r);padding:10px;font-family:var(--font-body);font-size:13px;color:var(--fg3);cursor:pointer;transition:all .15s;}
+.faq-add-btn:hover{border-color:rgba(251,226,74,.3);color:var(--yellow);background:var(--yellow-dim);}
+
+/* CHECKBOX */
+.checkbox-item{display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .15s;margin-bottom:10px;}
+.checkbox-item:hover{border-color:var(--border2);}
+.checkbox-item.checked{border-color:rgba(61,220,132,.3);background:var(--green-dim);}
+.checkbox-item input[type="checkbox"]{display:none;}
+.checkbox-box{width:20px;height:20px;border-radius:5px;border:2px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;margin-top:1px;}
+.checkbox-item.checked .checkbox-box{background:var(--green);border-color:var(--green);}
+.checkbox-item.checked .checkbox-box::after{content:'✓';font-size:11px;font-weight:700;color:#fff;}
+.checkbox-text{font-size:13px;color:var(--fg2);line-height:1.55;}
+.checkbox-text a{color:var(--yellow);text-decoration:none;}
+.checkbox-text a:hover{text-decoration:underline;}
+.checkbox-item.checked .checkbox-text{color:var(--fg);}
+
+/* NAV BUTTONS */
+.form-nav{display:flex;justify-content:space-between;align-items:center;margin-top:24px;padding-top:20px;border-top:1px solid var(--border);}
+.btn-back{background:transparent;color:var(--fg3);border:none;font-family:var(--font-body);font-size:14px;cursor:pointer;padding:10px 0;transition:color .15s;}
+.btn-back:hover{color:var(--fg);}
+.btn-next{background:var(--yellow);color:#06060a;border:none;font-family:var(--font-head);font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:12px 28px;border-radius:100px;cursor:pointer;transition:all .15s;}
+.btn-next:hover{background:var(--yellow2);transform:translateY(-1px);}
+.btn-generate{background:var(--yellow);color:#06060a;border:none;font-family:var(--font-head);font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:12px 28px;border-radius:100px;cursor:pointer;transition:all .2s;box-shadow:0 0 32px rgba(251,226,74,.2);}
+.btn-generate:hover{background:var(--yellow2);transform:translateY(-1px);}
+
+/* PREVIEW PANEL */
+.preview-panel{position:sticky;top:72px;}
+.preview-tabs{display:flex;border-bottom:1px solid var(--border);}
+.preview-tab{flex:1;padding:12px;text-align:center;cursor:pointer;font-family:var(--font-mono);font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--fg3);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;background:transparent;border-top:none;border-left:none;border-right:none;}
+.preview-tab.active{color:var(--yellow);border-bottom-color:var(--yellow);}
+
+/* CHAT PREVIEW */
+.chat-preview{padding:20px;}
+.chat-mock{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;}
+.chat-mock-header{padding:12px 16px;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.mock-avatar{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:background .3s;}
+.mock-name{font-size:13px;font-weight:600;color:var(--fg);}
+.mock-status{font-size:10px;color:var(--green);display:flex;align-items:center;gap:4px;margin-top:2px;}
+.mock-status::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);display:inline-block;}
+.chat-mock-body{padding:16px;display:flex;flex-direction:column;gap:8px;min-height:160px;}
+.mock-msg{max-width:80%;}
+.mock-msg.bot{align-self:flex-start;}
+.mock-msg.user{align-self:flex-end;}
+.mock-bubble{padding:9px 13px;border-radius:10px;font-size:13px;line-height:1.5;}
+.mock-msg.bot .mock-bubble{background:var(--card2);border:.5px solid var(--border2);color:var(--fg2);}
+.mock-msg.user .mock-bubble{color:#06060a;font-weight:500;}
+.chat-mock-input{padding:12px 14px;border-top:1px solid var(--border);display:flex;gap:8px;background:var(--bg);}
+.mock-input-field{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:8px 12px;font-size:12px;color:var(--fg3);}
+.mock-send{border:none;border-radius:7px;padding:8px 14px;font-size:11px;font-weight:700;cursor:default;transition:background .3s;color:#06060a;}
+
+/* CODE / EMAIL TABS */
+.code-view{display:none;padding:20px;}
+.code-block{background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);padding:20px;font-family:var(--font-mono);font-size:11px;color:var(--fg2);line-height:1.7;white-space:pre-wrap;word-break:break-all;max-height:280px;overflow-y:auto;}
+.code-block::-webkit-scrollbar{width:3px;}
+.code-block::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.code-actions{display:flex;gap:8px;margin-top:14px;}
+.code-btn{flex:1;padding:11px;border-radius:var(--r);font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .15s;border:none;}
+.code-btn.copy{background:var(--yellow);color:#06060a;}
+.code-btn.copy:hover{background:var(--yellow2);}
+.code-btn.dl{background:var(--card2);color:var(--fg2);border:1px solid var(--border2);}
+.code-btn.dl:hover{color:var(--fg);}
+.copy-ok{display:none;text-align:center;font-family:var(--font-mono);font-size:11px;color:var(--green);margin-top:8px;}
+
+.email-view{display:none;padding:20px;}
+.email-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);padding:20px;font-size:13px;color:var(--fg2);line-height:1.7;}
+.email-subject{font-family:var(--font-mono);font-size:10px;color:var(--fg3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.email-body{white-space:pre-line;}
+.email-actions{display:flex;gap:8px;margin-top:14px;}
+.email-btn{flex:1;padding:11px;border-radius:var(--r);font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .15s;border:none;}
+.email-btn.copy{background:var(--yellow);color:#06060a;}
+.email-btn.copy:hover{background:var(--yellow2);}
+
+/* SUCCESS */
+.success-state{display:none;text-align:center;padding:48px 24px;}
+.success-state.active{display:block;}
+.suc-icon{font-size:40px;margin-bottom:16px;display:block;}
+.suc-title{font-family:var(--font-head);font-size:22px;font-weight:700;color:var(--fg);margin-bottom:8px;}
+.suc-sub{font-size:14px;color:var(--fg2);line-height:1.6;margin-bottom:24px;font-weight:300;}
+.suc-btn{display:inline-block;background:var(--yellow);color:#06060a;font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:12px 24px;border-radius:100px;text-decoration:none;cursor:pointer;border:none;margin:4px;}
+
+/* REVIEW */
+.review-list{display:flex;flex-direction:column;gap:6px;margin-bottom:20px;}
+.review-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--fg2);background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;}
+.review-dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);flex-shrink:0;}
+.review-key{font-family:var(--font-mono);font-size:10px;color:var(--fg3);min-width:100px;}
+
+
+.avatar-grid{display:flex;gap:12px;flex-wrap:wrap;margin-top:4px;}
+.avatar-item{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;padding:10px;border-radius:var(--r2);border:1.5px solid var(--border);background:var(--bg3);transition:all .15s;flex:1;min-width:80px;}
+.avatar-item:hover{border-color:var(--border2);}
+.avatar-item.selected{border-color:rgba(251,226,74,.5);background:rgba(251,226,74,.06);}
+.avatar-svg{width:48px;height:56px;}
+.avatar-label{font-family:var(--font-mono);font-size:10px;color:var(--fg3);letter-spacing:.06em;}
+.avatar-item.selected .avatar-label{color:var(--yellow);}
+
+/* MOBILE */
+@media(max-width:900px){.layout{grid-template-columns:1fr;}.preview-panel{position:static;}}
+@media(max-width:480px){.layout{padding:20px 16px 60px;}.panel-body{padding:18px;}.field-row{grid-template-columns:1fr;}.platform-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="index.html">
+      <div class="nav-logo-mark">J</div>
+      <div class="nav-logo-text">JAYAMO <span>AI</span></div>
+    </a>
+    <span class="nav-badge">Konfigurator v2.0</span>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- LINKE SPALTE: FORMULAR -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title"><div class="panel-title-dot"></div>Bot-Konfigurator</div>
+      <div style="font-family:var(--font-mono);font-size:10px;color:var(--fg3);" id="step-counter">01 / 06</div>
+    </div>
+    <div class="panel-body">
+
+      <div class="progress-wrap">
+        <div class="progress-steps">
+          <div class="progress-step active" id="ps1"></div>
+          <div class="progress-step" id="ps2"></div>
+          <div class="progress-step" id="ps3"></div>
+          <div class="progress-step" id="ps4"></div>
+          <div class="progress-step" id="ps5"></div>
+          <div class="progress-step" id="ps6"></div>
+        </div>
+        <div class="progress-label"><span id="prog-label">Betrieb & Kontakt</span><span id="prog-pct">17%</span></div>
+      </div>
+
+      <!-- SECTION 1: BETRIEB & KONTAKT -->
+      <div class="section active" id="sec1">
+        <div class="section-eye">Schritt 01</div>
+        <div class="section-title">Betrieb & Kontakt</div>
+        <div class="section-sub">Grunddaten für die Personalisierung und die Code-Zustellung.</div>
+        <div class="field-row">
+          <div class="field">
+            <div class="field-label">Betriebsname <span class="field-required">*</span></div>
+            <input type="text" id="f-betrieb" placeholder="Mustermann SHK GmbH" oninput="updatePreview()" maxlength="60">
+          </div>
+          <div class="field">
+            <div class="field-label">Name des Inhabers <span class="field-required">*</span></div>
+            <input type="text" id="f-inhaber" placeholder="Max Mustermann" maxlength="60">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <div class="field-label">E-Mail <span class="field-required">*</span><span class="field-hint">Für Code-Zustellung</span></div>
+            <input type="email" id="f-email" placeholder="max@mustermann.de">
+          </div>
+          <div class="field">
+            <div class="field-label">Telefon <span class="field-required">*</span></div>
+            <input type="tel" id="f-tel" placeholder="+49 89 12345678" oninput="updatePreview()">
+          </div>
+        </div>
+        <div class="field">
+            <div class="field-label">Website-URL <span class="field-hint">Wo der Bot eingebunden wird</span></div>
+            <input type="text" id="f-website" placeholder="https://mustermann-shk.de">
+          </div>
+        <div class="form-nav">
+          <span></span>
+          <button class="btn-next" onclick="goSection(2)">Weiter — Gewerk →</button>
+        </div>
+      </div>
+
+      <!-- SECTION 2: GEWERK & BETRIEB -->
+      <div class="section" id="sec2">
+        <div class="section-eye">Schritt 02</div>
+        <div class="section-title">Gewerk & Einsatz</div>
+        <div class="section-sub">Womit der Assistent konfrontiert wird.</div>
+        <div class="field-row">
+          <div class="field">
+            <div class="field-label">Hauptgewerk <span class="field-required">*</span></div>
+            <select id="f-gewerk" onchange="updatePreview()">
+              <option value="SHK">Sanitär, Heizung & Klima</option>
+              <option value="Elektro">Elektrotechnik & PV</option>
+              <option value="Dach">Dachdeckerei & Zimmerei</option>
+              <option value="Maler">Maler & Lackierer</option>
+              <option value="Bau">Hoch- & Tiefbau</option>
+              <option value="Fliesen">Fliesen & Naturstein</option>
+              <option value="Trockenbau">Trockenbau & Innenausbau</option>
+              <option value="Mehrere">Mehrere Gewerke</option>
+            </select>
+          </div>
+          <div class="field">
+            <div class="field-label">Einsatzgebiet <span class="field-required">*</span></div>
+            <input type="text" id="f-region" placeholder="München & 80 km Umkreis" oninput="updatePreview()" maxlength="80">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <div class="field-label">Öffnungszeiten</div>
+            <input type="text" id="f-zeiten" placeholder="Mo–Fr 7–18 Uhr, Sa 8–13 Uhr" maxlength="100">
+          </div>
+          <div class="field">
+            <div class="field-label">Notdienst-Nummer <span class="field-hint">Für Notfälle</span></div>
+            <input type="tel" id="f-notfall" placeholder="+49 89 99999999" oninput="updatePreview()">
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label">Sprache des Bots</div>
+          <select id="f-sprache">
+            <option value="Deutsch">Deutsch (Standard)</option>
+            <option value="Österreichisch">Österreichisches Deutsch</option>
+            <option value="Schweizerdeutsch">Schweizerdeutsch</option>
+          </select>
+        </div>
+        <div class="form-nav">
+          <button class="btn-back" onclick="goSection(1)">← Zurück</button>
+          <button class="btn-next" onclick="goSection(3)">Weiter — Bot-Design →</button>
+        </div>
+      </div>
+
+      <!-- SECTION 3: BOT DESIGN -->
+      <div class="section" id="sec3">
+        <div class="section-eye">Schritt 03</div>
+        <div class="section-title">Bot-Persönlichkeit</div>
+        <div class="section-sub">Wie Ihr Assistent heißt, spricht und aussieht.</div>
+
+      <!-- AVATAR AUSWAHL -->
+      <div class="field" style="margin-bottom:20px;">
+        <div class="field-label">Avatar der Assistentin <span class="field-required">*</span></div>
+        <div class="avatar-grid" id="avatar-grid">
+
+          <div class="avatar-item selected" data-avatar="1" onclick="selectAvatar(1,this)">
+            <svg viewBox="0 0 60 70" xmlns="http://www.w3.org/2000/svg" class="avatar-svg">
+              <circle cx="30" cy="22" r="14" fill="#FDBCB4"/>
+              <ellipse cx="30" cy="22" rx="10" ry="13" fill="#C8A882"/>
+              <path d="M16 22 Q20 8 30 8 Q40 8 44 22 Q42 10 30 10 Q18 10 16 22Z" fill="#2C1810"/>
+              <path d="M20 22 Q18 14 24 12 Q20 18 20 22Z" fill="#1A0E08"/>
+              <path d="M40 22 Q42 14 36 12 Q40 18 40 22Z" fill="#1A0E08"/>
+              <circle cx="25" cy="22" r="2" fill="#1A0E08"/>
+              <circle cx="35" cy="22" r="2" fill="#1A0E08"/>
+              <path d="M26 28 Q30 31 34 28" stroke="#C0607A" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <rect x="18" y="38" width="24" height="28" rx="4" fill="#2E4B8A"/>
+              <rect x="22" y="38" width="16" height="6" fill="#fff" opacity="0.3"/>
+              <rect x="8" y="40" width="10" height="20" rx="5" fill="#FDBCB4"/>
+              <rect x="42" y="40" width="10" height="20" rx="5" fill="#FDBCB4"/>
+            </svg>
+            <span class="avatar-label">Sophie</span>
+          </div>
+
+          <div class="avatar-item" data-avatar="2" onclick="selectAvatar(2,this)">
+            <svg viewBox="0 0 60 70" xmlns="http://www.w3.org/2000/svg" class="avatar-svg">
+              <circle cx="30" cy="22" r="14" fill="#FDBCB4"/>
+              <path d="M16 18 Q18 6 30 6 Q42 6 44 18 Q44 12 30 12 Q16 12 16 18Z" fill="#D4892A"/>
+              <path d="M16 18 Q14 26 18 30 Q16 24 16 18Z" fill="#C07820"/>
+              <path d="M44 18 Q46 26 42 30 Q44 24 44 18Z" fill="#C07820"/>
+              <path d="M18 18 Q22 8 30 8 Q38 8 42 18 L44 28 Q40 38 30 36 Q20 38 16 28Z" fill="#FDBCB4"/>
+              <circle cx="25" cy="21" r="2" fill="#3D2B1F"/>
+              <circle cx="35" cy="21" r="2" fill="#3D2B1F"/>
+              <path d="M26 28 Q30 32 34 28" stroke="#C0607A" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <path d="M16 32 Q12 50 14 66 L30 66 L46 66 Q48 50 44 32 Q38 44 30 44 Q22 44 16 32Z" fill="#8B3A8B"/>
+              <rect x="8" y="36" width="10" height="22" rx="5" fill="#FDBCB4"/>
+              <rect x="42" y="36" width="10" height="22" rx="5" fill="#FDBCB4"/>
+            </svg>
+            <span class="avatar-label">Emma</span>
+          </div>
+
+          <div class="avatar-item" data-avatar="3" onclick="selectAvatar(3,this)">
+            <svg viewBox="0 0 60 70" xmlns="http://www.w3.org/2000/svg" class="avatar-svg">
+              <path d="M18 20 Q20 8 30 8 Q40 8 42 20 Q42 10 30 10 Q18 10 18 20Z" fill="#1A1A2E"/>
+              <path d="M16 28 Q14 22 18 18 Q16 24 16 28Z" fill="#0F0F1E"/>
+              <path d="M44 28 Q46 22 42 18 Q44 24 44 28Z" fill="#0F0F1E"/>
+              <ellipse cx="30" cy="24" rx="14" ry="16" fill="#F5CBA7"/>
+              <circle cx="25" cy="22" r="2" fill="#2C1810"/>
+              <circle cx="35" cy="22" r="2" fill="#2C1810"/>
+              <ellipse cx="23" cy="25" rx="3" ry="2" fill="#F08080" opacity="0.4"/>
+              <ellipse cx="37" cy="25" rx="3" ry="2" fill="#F08080" opacity="0.4"/>
+              <path d="M26 29 Q30 33 34 29" stroke="#E07070" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <rect x="18" y="40" width="24" height="26" rx="4" fill="#1A5276"/>
+              <rect x="26" y="40" width="8" height="26" fill="#fff" opacity="0.15"/>
+              <rect x="8" y="42" width="10" height="18" rx="5" fill="#F5CBA7"/>
+              <rect x="42" y="42" width="10" height="18" rx="5" fill="#F5CBA7"/>
+            </svg>
+            <span class="avatar-label">Mia</span>
+          </div>
+
+          <div class="avatar-item" data-avatar="4" onclick="selectAvatar(4,this)">
+            <svg viewBox="0 0 60 70" xmlns="http://www.w3.org/2000/svg" class="avatar-svg">
+              <path d="M20 16 Q22 6 30 6 Q38 6 40 16 Q38 8 30 9 Q22 8 20 16Z" fill="#8B6914"/>
+              <path d="M16 24 Q16 10 24 8 Q18 12 18 24Z" fill="#7A5C10"/>
+              <path d="M44 24 Q44 10 36 8 Q42 12 42 24Z" fill="#7A5C10"/>
+              <ellipse cx="30" cy="24" rx="13" ry="15" fill="#FDBCB4"/>
+              <circle cx="25.5" cy="22" r="2" fill="#3D2B1F"/>
+              <circle cx="34.5" cy="22" r="2" fill="#3D2B1F"/>
+              <path d="M27 29 Q30 32 33 29" stroke="#C06070" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <path d="M17 37 Q14 54 15 66 L30 66 L45 66 Q46 54 43 37 Q38 46 30 46 Q22 46 17 37Z" fill="#C0392B"/>
+              <rect x="26" y="37" width="8" height="8" fill="#fff" opacity="0.25"/>
+              <rect x="8" y="38" width="10" height="21" rx="5" fill="#FDBCB4"/>
+              <rect x="42" y="38" width="10" height="21" rx="5" fill="#FDBCB4"/>
+            </svg>
+            <span class="avatar-label">Laura</span>
+          </div>
+
+          <div class="avatar-item" data-avatar="5" onclick="selectAvatar(5,this)">
+            <svg viewBox="0 0 60 70" xmlns="http://www.w3.org/2000/svg" class="avatar-svg">
+              <ellipse cx="30" cy="23" rx="13" ry="15" fill="#8D5524"/>
+              <path d="M17 18 Q20 6 30 7 Q40 6 43 18 Q40 9 30 9 Q20 9 17 18Z" fill="#4A2800"/>
+              <path d="M17 22 Q15 30 17 36 Q17 28 17 22Z" fill="#3D2200"/>
+              <path d="M43 22 Q45 30 43 36 Q43 28 43 22Z" fill="#3D2200"/>
+              <circle cx="25.5" cy="22" r="2.2" fill="#1A0E00"/>
+              <circle cx="34.5" cy="22" r="2.2" fill="#1A0E00"/>
+              <ellipse cx="23" cy="26" rx="3" ry="2" fill="#C06040" opacity="0.35"/>
+              <ellipse cx="37" cy="26" rx="3" ry="2" fill="#C06040" opacity="0.35"/>
+              <path d="M26 30 Q30 34 34 30" stroke="#A04040" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <rect x="18" y="40" width="24" height="27" rx="4" fill="#1E8449"/>
+              <rect x="22" y="40" width="16" height="5" fill="#fff" opacity="0.2"/>
+              <circle cx="30" cy="50" r="3" fill="#fff" opacity="0.2"/>
+              <rect x="8" y="41" width="10" height="20" rx="5" fill="#8D5524"/>
+              <rect x="42" y="41" width="10" height="20" rx="5" fill="#8D5524"/>
+            </svg>
+            <span class="avatar-label">Aisha</span>
+          </div>
+
+        </div>
+      </div>
+        <div class="field-row">
+          <div class="field">
+            <div class="field-label">Name des Bots <span class="field-required">*</span></div>
+            <input type="text" id="f-botname" placeholder="Klaus" oninput="updatePreview()" maxlength="30">
+          </div>
+          <div class="field">
+            <div class="field-label">Primärfarbe</div>
+            <div class="color-row" id="color-row">
+              <div class="color-swatch selected" style="background:#fbe24a;color:#000;" data-color="#fbe24a" onclick="selectColor('#fbe24a',this)">✓</div>
+              <div class="color-swatch" style="background:#3b82f6;" data-color="#3b82f6" onclick="selectColor('#3b82f6',this)"></div>
+              <div class="color-swatch" style="background:#ef4444;" data-color="#ef4444" onclick="selectColor('#ef4444',this)"></div>
+              <div class="color-swatch" style="background:#10b981;" data-color="#10b981" onclick="selectColor('#10b981',this)"></div>
+              <div class="color-swatch" style="background:#8b5cf6;" data-color="#8b5cf6" onclick="selectColor('#8b5cf6',this)"></div>
+              <div class="color-swatch" style="background:#f97316;" data-color="#f97316" onclick="selectColor('#f97316',this)"></div>
+              <div class="color-swatch" style="background:#1a1a1a;border:1px solid rgba(255,255,255,0.2);" data-color="#1a1a1a" onclick="selectColor('#1a1a1a',this)"></div>
+            </div>
+            <input type="color" id="f-color" value="#fbe24a" oninput="selectColorCustom(this.value)" class="color-custom">
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label">Begrüßungstext</div>
+          <textarea id="f-greeting" placeholder="Guten Tag! Ich bin Klaus, der digitale Assistent von Mustermann SHK. Wie kann ich Ihnen helfen?" oninput="updatePreview()" rows="3"></textarea>
+        </div>
+        <div class="form-nav">
+          <button class="btn-back" onclick="goSection(2)">← Zurück</button>
+          <button class="btn-next" onclick="goSection(4)">Weiter — Plattform →</button>
+        </div>
+      </div>
+
+      <!-- SECTION 4: PLATTFORM -->
+      <div class="section" id="sec4">
+        <div class="section-eye">Schritt 04</div>
+        <div class="section-title">Website-Plattform</div>
+        <div class="section-sub">Wo wird der Bot eingebunden? Wir schicken die passende Anleitung mit.</div>
+        <div class="platform-grid" id="platform-grid">
+          <label class="platform-item selected" onclick="selectPlatform(this)">
+            <input type="radio" name="platform" value="WordPress" checked>
+            <span class="platform-icon">🔵</span>
+            <span class="platform-name">WordPress</span>
+          </label>
+          <label class="platform-item" onclick="selectPlatform(this)">
+            <input type="radio" name="platform" value="Shopify">
+            <span class="platform-icon">🟢</span>
+            <span class="platform-name">Shopify</span>
+          </label>
+          <label class="platform-item" onclick="selectPlatform(this)">
+            <input type="radio" name="platform" value="Wix">
+            <span class="platform-icon">⚫</span>
+            <span class="platform-name">Wix</span>
+          </label>
+          <label class="platform-item" onclick="selectPlatform(this)">
+            <input type="radio" name="platform" value="Squarespace">
+            <span class="platform-icon">⬛</span>
+            <span class="platform-name">Squarespace</span>
+          </label>
+          <label class="platform-item" onclick="selectPlatform(this)">
+            <input type="radio" name="platform" value="Jimdo">
+            <span class="platform-icon">🔴</span>
+            <span class="platform-name">Jimdo</span>
+          </label>
+          <label class="platform-item" onclick="selectPlatform(this)">
+            <input type="radio" name="platform" value="Eigene">
+            <span class="platform-icon">⚙️</span>
+            <span class="platform-name">Eigene Website</span>
+          </label>
+        </div>
+        <div class="form-nav">
+          <button class="btn-back" onclick="goSection(3)">← Zurück</button>
+          <button class="btn-next" onclick="goSection(5)">Weiter — FAQs →</button>
+        </div>
+      </div>
+
+      <!-- SECTION 5: FAQs -->
+      <div class="section" id="sec5">
+        <div class="section-eye">Schritt 05</div>
+        <div class="section-title">Häufige Fragen</div>
+        <div class="section-sub">Was der Assistent automatisch beantworten soll. Mind. 3, max. 10.</div>
+        <div class="faq-list" id="faq-list"></div>
+        <button class="faq-add-btn" onclick="addFaq()" id="faq-add-btn">+ Frage hinzufügen</button>
+        <div class="form-nav">
+          <button class="btn-back" onclick="goSection(4)">← Zurück</button>
+          <button class="btn-next" onclick="goSection(6)">Weiter — Bestätigung →</button>
+        </div>
+      </div>
+
+      <!-- SECTION 6: DSGVO & BESTÄTIGUNG -->
+      <div class="section" id="sec6">
+        <div class="section-eye">Schritt 06</div>
+        <div class="section-title">Rechtliche Bestätigung</div>
+        <div class="section-sub">Pflichtangaben gemäß DSGVO — ohne diese kann kein Code generiert werden.</div>
+        <div class="review-list" id="review-list"></div>
+
+        <label class="checkbox-item" id="cb1-wrap" onclick="toggleCheck('cb1')">
+          <input type="checkbox" id="cb1">
+          <div class="checkbox-box"></div>
+          <div class="checkbox-text">Ich habe die <a href="datenschutz.html" target="_blank">Datenschutzerklärung</a> gelesen und stimme der Verarbeitung meiner Daten gemäß DSGVO zu. <span style="color:var(--red);font-size:11px;">*</span></div>
+        </label>
+        <label class="checkbox-item" id="cb2-wrap" onclick="toggleCheck('cb2')">
+          <input type="checkbox" id="cb2">
+          <div class="checkbox-box"></div>
+          <div class="checkbox-text">Ich bestätige den Abschluss eines Auftragsverarbeitungsvertrags (AVV) gemäß Art. 28 DSGVO mit JAYAMO AI. Der AVV wird nach Generierung per E-Mail zugesandt. <span style="color:var(--red);font-size:11px;">*</span></div>
+        </label>
+        <label class="checkbox-item" id="cb3-wrap" onclick="toggleCheck('cb3')">
+          <input type="checkbox" id="cb3">
+          <div class="checkbox-box"></div>
+          <div class="checkbox-text">Ich habe die <a href="agb.html" target="_blank">AGB</a> gelesen und akzeptiere die Nutzungsbedingungen von Anfragen-Werk. <span style="color:var(--red);font-size:11px;">*</span></div>
+        </label>
+
+        <div class="form-nav">
+          <button class="btn-back" onclick="goSection(5)">← Zurück</button>
+          <button class="btn-generate" onclick="generateCode()">⚡ Code generieren</button>
+        </div>
+      </div>
+
+      <!-- SUCCESS -->
+      <div class="success-state" id="success-state">
+        <span class="suc-icon">✓</span>
+        <div class="suc-title">Code ist fertig.</div>
+        <div class="suc-sub">Der Einbettungscode wurde generiert. Kopiere ihn und binde ihn auf deiner Website ein — oder lass dir die Anleitung zuschicken.</div>
+        <button class="suc-btn" onclick="resetForm()">Neuen Bot konfigurieren</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RECHTE SPALTE: PREVIEW -->
+  <div class="panel preview-panel">
+    <div class="panel-header">
+      <div class="panel-title"><div class="panel-title-dot"></div>Live-Vorschau</div>
+    </div>
+    <div class="preview-tabs">
+      <button class="preview-tab active" onclick="switchTab('chat',this)">Chat</button>
+      <button class="preview-tab" onclick="switchTab('code',this)">Code</button>
+      <button class="preview-tab" onclick="switchTab('email',this)">E-Mail</button>
+    </div>
+    <div class="chat-preview" id="tab-chat">
+      <div class="chat-mock">
+        <div class="chat-mock-header">
+          <div class="mock-avatar" id="prev-avatar" style="background:#fbe24a;">🔧</div>
+          <div>
+            <div class="mock-name" id="prev-name">Klaus — Mustermann SHK</div>
+            <div class="mock-status">Online</div>
+          </div>
+        </div>
+        <div class="chat-mock-body">
+          <div class="mock-msg bot"><div class="mock-bubble" id="prev-greeting">Guten Tag! Wie kann ich helfen?</div></div>
+          <div class="mock-msg user"><div class="mock-bubble" id="prev-user-bubble" style="background:#fbe24a;">Ich habe einen Rohrbruch!</div></div>
+          <div class="mock-msg bot"><div class="mock-bubble">Das klingt dringend — ich leite Sie sofort weiter. Können Sie kurz Ihren Ort nennen?</div></div>
+        </div>
+        <div class="chat-mock-input">
+          <div class="mock-input-field">Schreiben Sie Ihre Anfrage...</div>
+          <div class="mock-send" id="prev-send-btn" style="background:#fbe24a;">→</div>
+        </div>
+      </div>
+    </div>
+    <div class="code-view" id="tab-code">
+      <div class="code-block" id="code-output">← Fülle das Formular aus und klicke "Code generieren"</div>
+      <div class="code-actions">
+        <button class="code-btn copy" onclick="copyCode()">Code kopieren</button>
+        <button class="code-btn dl" onclick="downloadCode()">Herunterladen</button>
+      </div>
+      <div class="copy-ok" id="copy-ok">✓ Kopiert!</div>
+    </div>
+    <div class="email-view" id="tab-email">
+      <div class="email-card">
+        <div class="email-subject" id="email-subject">Betreff: Ihr Anfragen-Werk Code ist bereit</div>
+        <div class="email-body" id="email-body">← Konfiguration abschließen</div>
+      </div>
+      <div class="email-actions">
+        <button class="email-btn copy" onclick="copyEmail()">E-Mail kopieren</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+// AVATAR
+var selectedAvatar = 1;
+var avatarEmojis = {1:'👩‍💼', 2:'👩‍🦰', 3:'👩', 4:'👩‍🦳', 5:'👩🏾'};
+function selectAvatar(n, el){
+  selectedAvatar = n;
+  document.querySelectorAll('.avatar-item').forEach(function(a){a.classList.remove('selected');});
+  el.classList.add('selected');
+  updatePreview();
+}
+
+// STATE
+var state = {
+  betrieb:'',inhaber:'',email:'',tel:'',website:'',adresse:'',ustid:'',
+  gewerk:'SHK',region:'',zeiten:'',notfall:'',sprache:'Deutsch',
+  botname:'Klaus',color:'#fbe24a',greeting:'',
+  platform:'WordPress',
+  faqs:[],
+  code:''
+};
+var currentSection = 1;
+var faqCount = 0;
+
+var sectionLabels = ['Betrieb & Kontakt','Gewerk & Einsatz','Bot-Persönlichkeit','Plattform','FAQs','Bestätigung'];
+
+// INIT
+window.addEventListener('DOMContentLoaded', function(){
+  var defaults = [
+    {q:'Was kostet eine Heizungswartung?', a:'Die Kosten hängen vom Aufwand ab — schildern Sie mir kurz was ansteht, dann geben wir Ihnen eine ehrliche Einschätzung.'},
+    {q:'Wie schnell können Sie kommen?', a:'Bei Notfällen sind wir in der Regel innerhalb von 2–4 Stunden vor Ort. Für Terminarbeiten vereinbaren wir gemeinsam einen passenden Termin.'},
+    {q:'Machen Sie auch Notdienst?', a:'Ja, wir haben einen 24/7-Notdienst für dringende Fälle wie Rohrbruch oder Heizungsausfall im Winter.'}
+  ];
+  defaults.forEach(function(d){ addFaqItem(d.q, d.a); });
+  document.getElementById('tab-code').style.display='none';
+  document.getElementById('tab-email').style.display='none';
+});
+
+// NAVIGATION
+function goSection(n){
+  document.getElementById('sec'+currentSection).classList.remove('active');
+  document.getElementById('ps'+currentSection).classList.remove('active');
+  document.getElementById('ps'+currentSection).classList.add('done');
+  currentSection = n;
+  document.getElementById('sec'+n).classList.add('active');
+  document.getElementById('ps'+n).classList.add('active');
+  document.getElementById('ps'+n).classList.remove('done');
+  document.getElementById('step-counter').textContent = '0'+n+' / 06';
+  document.getElementById('prog-label').textContent = sectionLabels[n-1];
+  document.getElementById('prog-pct').textContent = Math.round((n/6)*100)+'%';
+  if(n===6) buildReview();
+  updatePreview();
+}
+
+// COLOR
+function selectColor(c,el){
+  state.color=c;
+  document.querySelectorAll('.color-swatch').forEach(function(s){s.classList.remove('selected');s.textContent='';});
+  el.classList.add('selected'); el.textContent='✓';
+  document.getElementById('f-color').value=c;
+  updatePreview();
+}
+function selectColorCustom(c){
+  state.color=c;
+  document.querySelectorAll('.color-swatch').forEach(function(s){s.classList.remove('selected');s.textContent='';});
+  updatePreview();
+}
+
+// PLATFORM
+function selectPlatform(el){
+  document.querySelectorAll('.platform-item').forEach(function(p){p.classList.remove('selected');});
+  el.classList.add('selected');
+  state.platform = el.querySelector('input').value;
+}
+
+// CHECKBOX
+function toggleCheck(id){
+  var cb=document.getElementById(id);
+  var wrap=document.getElementById(id+'-wrap');
+  cb.checked=!cb.checked;
+  if(cb.checked){wrap.classList.add('checked');}
+  else{wrap.classList.remove('checked');}
+}
+
+// FAQ
+function addFaqItem(q,a){
+  faqCount++;
+  var id=faqCount;
+  var list=document.getElementById('faq-list');
+  var div=document.createElement('div');
+  div.className='faq-item'; div.id='faq-'+id;
+  div.innerHTML='<div class="faq-item-head"><span class="faq-n">FAQ '+String(id).padStart(2,'0')+'</span><button class="faq-remove" onclick="removeFaq('+id+')">×</button></div><input type="text" placeholder="Frage des Kunden..." value="'+esc(q||'')+'" oninput="updateFaqs()"><textarea rows="2" placeholder="Antwort des Bots...">'+esc(a||'')+'</textarea>';
+  list.appendChild(div);
+  updateFaqs();
+  if(faqCount>=10) document.getElementById('faq-add-btn').style.display='none';
+}
+function addFaq(){ addFaqItem('',''); }
+function removeFaq(id){ var el=document.getElementById('faq-'+id); if(el) el.remove(); updateFaqs(); if(faqCount<10) document.getElementById('faq-add-btn').style.display=''; }
+function updateFaqs(){
+  state.faqs=[];
+  document.querySelectorAll('.faq-item').forEach(function(item){
+    var inputs=item.querySelectorAll('input,textarea');
+    if(inputs[0]&&inputs[1]) state.faqs.push({q:inputs[0].value.trim(),a:inputs[1].value.trim()});
+  });
+}
+function esc(s){ return (s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escJs(s){ return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,'\\n'); }
+function isLight(hex){ var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16); return (r*0.299+g*0.587+b*0.114)>160; }
+
+// PREVIEW UPDATE
+function updatePreview(){
+  state.betrieb=(document.getElementById('f-betrieb')||{}).value||'';
+  state.gewerk=(document.getElementById('f-gewerk')||{}).value||'SHK';
+  state.region=(document.getElementById('f-region')||{}).value||'';
+  state.tel=(document.getElementById('f-tel')||{}).value||'';
+  state.notfall=(document.getElementById('f-notfall')||{}).value||'';
+  state.botname=(document.getElementById('f-botname')||{}).value||'Klaus';
+  state.greeting=(document.getElementById('f-greeting')||{}).value||'';
+  state.color=document.getElementById('f-color').value||'#fbe24a';
+
+  var b=state.betrieb||'Mustermann SHK GmbH';
+  var n=state.botname||'Klaus';
+  var g=state.greeting||'Guten Tag! Ich bin '+n+', der digitale Assistent von '+b+'. Wie kann ich Ihnen helfen?';
+  var c=state.color;
+  var tc=isLight(c)?'#0a0a0a':'#ffffff';
+
+  document.getElementById('prev-name').textContent=n+' — '+b;
+  document.getElementById('prev-greeting').textContent=g;
+  document.getElementById('prev-avatar').style.background=c;
+  document.getElementById('prev-avatar').style.color=tc;
+  document.getElementById('prev-user-bubble').style.background=c;
+  document.getElementById('prev-user-bubble').style.color=tc;
+  document.getElementById('prev-send-btn').style.background=c;
+  document.getElementById('prev-send-btn').style.color=tc;
+}
+
+// REVIEW
+function buildReview(){
+  updateFaqs();
+  var b=state.betrieb||(document.getElementById('f-betrieb')||{}).value||'—';
+  var items=[
+    {k:'Betrieb', v:b||'—'},
+    {k:'Gewerk', v:(document.getElementById('f-gewerk')||{}).value||'—'},
+    {k:'Region', v:(document.getElementById('f-region')||{}).value||'—'},
+    {k:'Bot-Name', v:(document.getElementById('f-botname')||{}).value||'Klaus'},
+    {k:'Plattform', v:state.platform||'WordPress'},
+    {k:'FAQs', v:state.faqs.length+' konfiguriert'},
+    {k:'Sprache', v:(document.getElementById('f-sprache')||{}).value||'Deutsch'}
+  ];
+  document.getElementById('review-list').innerHTML=items.map(function(i){
+    return '<div class="review-item"><div class="review-dot"></div><span class="review-key">'+i.k+'</span><span>'+i.v+'</span></div>';
+  }).join('');
+}
+
+// GENERATE
+function generateCode(){
+  if(!document.getElementById('cb1').checked||!document.getElementById('cb2').checked||!document.getElementById('cb3').checked){
+    alert('Bitte alle Pflichtfelder bestätigen.');return;
+  }
+  updateFaqs();
+  var b=(document.getElementById('f-betrieb')||{}).value||'Handwerksbetrieb';
+  var gw=(document.getElementById('f-gewerk')||{}).value||'SHK';
+  var r=(document.getElementById('f-region')||{}).value||'Ihrer Region';
+  var t=(document.getElementById('f-tel')||{}).value||'';
+  var nf=(document.getElementById('f-notfall')||{}).value||'';
+  var w=(document.getElementById('f-website')||{}).value||'';
+  var n=(document.getElementById('f-botname')||{}).value||'Klaus';
+  var gr=(document.getElementById('f-greeting')||{}).value||'Guten Tag! Ich bin '+n+', der digitale Assistent von '+b+'. Wie kann ich Ihnen helfen?';
+  var c=state.color;
+  var tc=isLight(c)?'#0a0a0a':'#ffffff';
+  var z=(document.getElementById('f-zeiten')||{}).value||'';
+  var sp=(document.getElementById('f-sprache')||{}).value||'Deutsch';
+
+  var faqStr=state.faqs.filter(function(f){return f.q&&f.a;}).map(function(f){return 'F: '+escJs(f.q)+' → A: '+escJs(f.a);}).join('\\n');
+
+  var systemPrompt='Du bist '+escJs(n)+', der digitale Assistent von '+escJs(b)+' ('+escJs(gw)+', Einsatzgebiet: '+escJs(r)+').\\n\\n'
+    +'Qualifiziere Anfragen in max. 3 Sätzen. Frage nach: Problem, Dringlichkeit, PLZ, Name.\\n'
+    +'NOTFALL (Rohrbruch, Heizungsausfall, Gasgeruch): sofort priorisieren'+(nf?', Notfallnummer '+escJs(nf)+' nennen':'')+'.\\n'
+    +'PLANAUFTRAG: Termin anbieten.\\n'
+    +'PREISFRAGE: Aufwand erfragen.\\n'
+    +(z?'Öffnungszeiten: '+escJs(z)+'\\n':'')
+    +(w?'Website: '+escJs(w)+'\\n':'')
+    +'FAQ:\\n'+faqStr+'\\n\\n'
+    +'Antworte auf '+escJs(sp)+'. Du bist '+escJs(n)+' von '+escJs(b)+'.';
+
+  var code = '<!-- Anfragen-Werk Widget · '+b+' · JAYAMO AI -->\n'
+    +'<!-- Einfügen direkt vor </body> -->\n'
+    +'<script>\n'
+    +'(function(){\n'
+    +"  var P='"+c+"',T='"+tc+"',N='"+escJs(n)+"',G='"+escJs(gr)+"',S='"+systemPrompt+"';\n"
+    +'  var H=[],open=false;\n'
+    +'  var style=document.createElement("style");\n'
+    +'  style.textContent=[\n'
+    +'    "#aw-btn{position:fixed;bottom:24px;right:24px;width:56px;height:56px;border-radius:50%;background:"+P+";border:none;cursor:pointer;box-shadow:0 4px 24px rgba(0,0,0,0.25);z-index:9999;font-size:22px;color:"+T+";transition:transform .2s;}",\n'
+    +'    "#aw-btn:hover{transform:scale(1.08);}",\n'
+    +'    "#aw-box{display:none;position:fixed;bottom:92px;right:24px;width:340px;max-height:520px;background:#0d0d14;border:1px solid rgba(255,255,255,0.1);border-radius:16px;box-shadow:0 24px 64px rgba(0,0,0,0.5);z-index:9998;flex-direction:column;overflow:hidden;}",\n'
+    +'    "#aw-box.open{display:flex;}",\n'
+    +'    "#aw-head{padding:14px 16px;background:#13131e;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:10px;}",\n'
+    +'    "#aw-av{width:32px;height:32px;border-radius:8px;background:"+P+";display:flex;align-items:center;justify-content:center;font-size:14px;color:"+T+";}",\n'
+    +'    "#aw-hn{font-size:13px;font-weight:600;color:#f0f0f8;}",\n'
+    +'    "#aw-hs{font-size:10px;color:#3ddc84;display:flex;align-items:center;gap:4px;}",\n'
+    +'    "#aw-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px;}",\n'
+    +'    ".aw-b{align-self:flex-start;max-width:85%;}",\n'
+    +'    ".aw-u{align-self:flex-end;max-width:85%;}",\n'
+    +'    ".aw-bb{padding:9px 13px;border-radius:10px;font-size:13px;line-height:1.5;}",\n'
+    +'    ".aw-b .aw-bb{background:#1a1a28;border:.5px solid rgba(255,255,255,.08);color:#c8c8e0;}",\n'
+    +'    ".aw-u .aw-bb{background:"+P+";color:"+T+";font-weight:500;}",\n'
+    +'    ".aw-dots{display:flex;gap:3px;padding:4px 0;}",\n'
+    +'    ".aw-dots span{width:5px;height:5px;border-radius:50%;background:#55556a;animation:awb 1.2s infinite;}",\n'
+    +'    ".aw-dots span:nth-child(2){animation-delay:.2s}.aw-dots span:nth-child(3){animation-delay:.4s}",\n'
+    +'    "@keyframes awb{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}",\n'
+    +'    "#aw-inp{padding:10px 12px;border-top:1px solid rgba(255,255,255,.07);display:flex;gap:7px;background:#13131e;}",\n'
+    +'    "#aw-input{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:9px 12px;color:#f0f0f8;font-size:13px;outline:none;}",\n'
+    +'    "#aw-send{background:"+P+";color:"+T+";border:none;border-radius:8px;padding:9px 14px;font-size:12px;font-weight:700;cursor:pointer;}",\n'
+    +'    "@media(max-width:400px){#aw-box{width:calc(100vw - 32px);right:16px;}}"\n'
+    +'  ].join("");\n'
+    +'  document.head.appendChild(style);\n'
+    +'  var w=document.createElement("div");\n'
+    +'  w.innerHTML=\'<button id="aw-btn" onclick="awT()">💬</button><div id="aw-box"><div id="aw-head"><div id="aw-av">🔧</div><div><div id="aw-hn">\'+N+\'</div><div id="aw-hs">● Online</div></div></div><div id="aw-msgs"></div><div id="aw-inp"><input id="aw-input" placeholder="Ihre Anfrage..." onkeydown="if(event.key===chr(39)Enter chr(39))awS()"><button id="aw-send" onclick="awS()">→</button></div></div>\';\n'
+    +'  w.innerHTML=w.innerHTML.replace(/chr\\(39\\)/g,"\'");\n'
+    +'  document.body.appendChild(w);\n'
+    +'  setTimeout(function(){awB(G);},400);\n'
+    +'  window.awT=function(){open=!open;document.getElementById("aw-box").className=open?"open":"";document.getElementById("aw-btn").textContent=open?"✕":"💬";};\n'
+    +'  window.awB=function(t){var m=document.getElementById("aw-msgs");var d=document.createElement("div");d.className="aw-b";d.innerHTML=\'<div class="aw-bb">\'+t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")+"</div>";m.appendChild(d);m.scrollTop=m.scrollHeight;};\n'
+    +'  window.awS=async function(){var inp=document.getElementById("aw-input");var txt=inp.value.trim();if(!txt||window._awL)return;inp.value="";var msgs=document.getElementById("aw-msgs");var ud=document.createElement("div");ud.className="aw-u";ud.innerHTML=\'<div class="aw-bb">\'+txt.replace(/&/g,"&amp;").replace(/</g,"&lt;")+"</div>";msgs.appendChild(ud);msgs.scrollTop=msgs.scrollHeight;H.push({role:"user",content:txt});window._awL=true;var td=document.createElement("div");td.className="aw-b";td.id="aw-ty";td.innerHTML=\'<div class="aw-bb"><div class="aw-dots"><span></span><span></span><span></span></div></div>\';msgs.appendChild(td);msgs.scrollTop=msgs.scrollHeight;try{var r=await fetch("https://anfragen-chat.javichumartin1975.workers.dev",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:H,system:S})});var data=await r.json();var reply=data.reply||"Entschuldigung — kurzer Fehler.";var ty=document.getElementById("aw-ty");if(ty)ty.remove();awB(reply);H.push({role:"assistant",content:reply});}catch(e){var ty=document.getElementById("aw-ty");if(ty)ty.remove();awB("Verbindungsfehler.");}window._awL=false;};\n'
+    +'})();\n'
+    +'<\/script>\n'
+    +'<!-- Ende Anfragen-Werk Widget -->';
+
+  state.code = code;
+  document.getElementById('code-output').textContent = code;
+  generateEmail(b,n);
+  switchTab('code', document.querySelectorAll('.preview-tab')[1]);
+  document.getElementById('sec6').classList.remove('active');
+  document.getElementById('success-state').classList.add('active');
+}
+
+function generateEmail(b,n){
+  var inh=(document.getElementById('f-inhaber')||{}).value||'';
+  var pl=state.platform||'WordPress';
+  var anleitungen={'WordPress':'Gehen Sie in WordPress zu Design → Theme-Editor oder einem Plugin wie "Insert Headers and Footers" und fügen Sie den Code vor dem </body>-Tag ein.','Shopify':'Gehen Sie in Shopify zu Online Store → Themes → Edit Code und fügen Sie den Code in der theme.liquid vor </body> ein.','Wix':'Gehen Sie in Wix zu Settings → Custom Code und fügen Sie den Code im Bereich "Body - end" ein.','Squarespace':'Gehen Sie zu Settings → Advanced → Code Injection und fügen Sie den Code im Footer-Bereich ein.','Jimdo':'Gehen Sie zu Settings → HTML & Scripts und fügen Sie den Code im Footer ein.','Eigene':'Fügen Sie den Code direkt vor dem schließenden </body>-Tag in Ihrer HTML-Datei ein.'};
+
+  var body='Guten Tag'+(inh?' '+inh.split(' ')[0]:'')+',\n\n'
+    +'Ihr persönlicher Anfragen-Assistent "'+n+'" ist fertig konfiguriert.\n\n'
+    +'EINBINDUNG AUF IHRER WEBSITE ('+pl+'):\n'
+    +(anleitungen[pl]||anleitungen['Eigene'])+'\n\n'
+    +'Was der Assistent für Sie erledigt:\n'
+    +'✓ Anfragen 24/7 entgegennehmen\n'
+    +'✓ Notfälle sofort priorisieren\n'
+    +'✓ Kundendaten strukturiert erfassen\n'
+    +'✓ Häufige Fragen automatisch beantworten\n\n'
+    +'Den Einbettungscode finden Sie im Konfigurator unter dem Tab "Code".\n\n'
+    +'Bei Fragen stehe ich Ihnen gerne zur Verfügung.\n\n'
+    +'Javier San José Martin\n'
+    +'JAYAMO AI — Anfragen-Werk\n'
+    +'javichumartin1975@gmail.com\n'
+    +'+49 177 839 3026';
+
+  document.getElementById('email-subject').textContent='Betreff: Ihr Anfragen-Werk Assistent "'+n+'" ist bereit';
+  document.getElementById('email-body').textContent=body;
+  window._emailText='Betreff: Ihr Anfragen-Werk Assistent "'+n+'" ist bereit\n\n'+body;
+}
+
+// TABS
+function switchTab(tab,el){
+  document.querySelectorAll('.preview-tab').forEach(function(t){t.classList.remove('active');});
+  el.classList.add('active');
+  document.getElementById('tab-chat').style.display=tab==='chat'?'block':'none';
+  document.getElementById('tab-code').style.display=tab==='code'?'block':'none';
+  document.getElementById('tab-email').style.display=tab==='email'?'block':'none';
+}
+
+function copyCode(){ if(!state.code){alert('Erst Code generieren.');return;} navigator.clipboard.writeText(state.code).then(function(){var s=document.getElementById('copy-ok');s.style.display='block';setTimeout(function(){s.style.display='none';},2500);}); }
+function downloadCode(){ if(!state.code){alert('Erst Code generieren.');return;} var b=(state.betrieb||'anfragen-werk').replace(/\s+/g,'-').toLowerCase(); var blob=new Blob([state.code],{type:'text/html'}); var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=b+'-widget.html'; a.click(); }
+function copyEmail(){ if(!window._emailText){alert('Erst Code generieren.');return;} navigator.clipboard.writeText(window._emailText).then(function(){alert('E-Mail-Text kopiert!');}); }
+function resetForm(){ document.getElementById('success-state').classList.remove('active'); document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');}); document.querySelectorAll('.progress-step').forEach(function(d){d.classList.remove('active','done');}); currentSection=1; document.getElementById('sec1').classList.add('active'); document.getElementById('ps1').classList.add('active'); document.getElementById('step-counter').textContent='01 / 06'; document.getElementById('prog-label').textContent='Betrieb & Kontakt'; document.getElementById('prog-pct').textContent='17%'; switchTab('chat',document.querySelectorAll('.preview-tab')[0]); }
+</script>
+</body>
+</html>
