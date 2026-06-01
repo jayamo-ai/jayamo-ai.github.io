@@ -1,0 +1,1580 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JAYAMO AI · Kein Auftrag geht verloren</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --yellow: #fbe24a;
+      --yellow-dark: #e0c423;
+      --black: #0a0a0a;
+      --card: #111110;
+      --card2: #181817;
+      --fg: #f4f4f0;
+      --fg-dim: #c2c2bd;
+      --muted: #87877f;
+      --border: rgba(244,244,240,0.12);
+      --border-v: rgba(244,244,240,0.2);
+      --ff: "SF Pro Display","Helvetica Neue",Helvetica,Arial,sans-serif;
+      --ff-text: "SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+      --ff-mono: "SF Mono","Fira Code",monospace;
+      --r: 16px;
+      --r-pill: 980px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--ff-text); color: var(--fg); background: var(--black); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      height: 52px; display: flex; align-items: center;
+    }
+    .nav-inner {
+      max-width: 980px; width: 100%; margin: 0 auto;
+      padding: 0 20px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo { display: flex; align-items: center; text-decoration: none; }
+    .nav-links { display: flex; gap: 24px; list-style: none; }
+    .nav-links a { font-size: 13px; color: var(--muted); text-decoration: none; transition: color .15s; }
+    .nav-links a:hover { color: var(--fg); }
+    .nav-cta {
+      background: var(--yellow); color: var(--black);
+      font-family: var(--ff-text); font-size: 13px; font-weight: 600;
+      padding: 7px 16px; border-radius: var(--r-pill); text-decoration: none;
+      transition: background .15s; white-space: nowrap;
+    }
+    .nav-cta:hover { background: var(--yellow-dark); }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      text-align: center; padding: 80px 20px 96px;
+    }
+    .hero-eye {
+      font-family: var(--ff-mono); font-size: 11px; font-weight: 500;
+      letter-spacing: .16em; text-transform: uppercase;
+      color: var(--yellow); margin-bottom: 20px; display: block;
+    }
+    .hero h1 {
+      font-family: var(--ff); font-size: clamp(36px,6vw,72px);
+      font-weight: 700; letter-spacing: -.03em; line-height: 1.05;
+      color: var(--fg); max-width: 760px; margin: 0 auto 20px;
+    }
+    .hero h1 em { color: var(--yellow); font-style: normal; }
+    .hero-sub {
+      font-family: var(--ff); font-size: clamp(17px,2.2vw,22px);
+      font-weight: 400; line-height: 1.5; color: var(--muted);
+      max-width: 520px; margin: 0 auto 40px;
+    }
+    .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-p {
+      background: var(--yellow); color: var(--black);
+      font-family: var(--ff-text); font-size: 17px; font-weight: 600;
+      padding: 13px 28px; border-radius: var(--r-pill);
+      text-decoration: none; border: none; cursor: pointer;
+      display: inline-block; transition: background .15s; white-space: nowrap;
+    }
+    .btn-p:hover { background: var(--yellow-dark); }
+    .btn-s {
+      background: transparent; color: var(--yellow);
+      font-family: var(--ff-text); font-size: 17px; font-weight: 600;
+      padding: 13px 28px; border-radius: var(--r-pill);
+      text-decoration: none; border: 1px solid var(--yellow);
+      display: inline-block; transition: all .15s; white-space: nowrap;
+    }
+    .btn-s:hover { background: var(--yellow); color: var(--black); }
+    .hero-note { margin-top: 16px; font-size: 13px; color: var(--muted); }
+
+    /* ── STATS ── */
+    .stats {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      border-bottom: 1px solid var(--border);
+    }
+    .stat {
+      padding: 28px 20px; text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-n {
+      font-family: var(--ff); font-size: 32px; font-weight: 700;
+      letter-spacing: -.02em; color: var(--yellow); display: block;
+    }
+    .stat-l { font-size: 12px; color: var(--muted); margin-top: 4px; display: block; line-height: 1.4; }
+
+    /* ── SECTION ── */
+    .sec { padding: 88px 20px; }
+    .sec-inner { max-width: 980px; margin: 0 auto; }
+    .sec-alt { background: var(--card); }
+    .sec-eye {
+      font-family: var(--ff-mono); font-size: 11px; font-weight: 500;
+      letter-spacing: .16em; text-transform: uppercase;
+      color: var(--yellow); margin-bottom: 12px; text-align: center; display: block;
+    }
+    .sec-title {
+      font-family: var(--ff); font-size: clamp(28px,4vw,44px);
+      font-weight: 700; letter-spacing: -.025em; line-height: 1.1;
+      color: var(--fg); text-align: center; margin-bottom: 14px;
+    }
+    .sec-sub {
+      font-size: 17px; color: var(--muted); text-align: center;
+      max-width: 500px; margin: 0 auto 56px; line-height: 1.55;
+    }
+
+    /* ── PROBLEM CARDS ── */
+    .prob-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; }
+    .prob-card {
+      background: var(--card2); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 28px;
+    }
+    .prob-time { font-family: var(--ff-mono); font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+    .prob-scene {
+      font-family: var(--ff-mono); font-size: 10px; font-weight: 600;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 8px;
+    }
+    .prob-card h3 {
+      font-family: var(--ff); font-size: 20px; font-weight: 600;
+      letter-spacing: -.015em; color: var(--fg);
+      margin-bottom: 8px; line-height: 1.2;
+    }
+    .prob-card p { font-size: 14px; color: var(--muted); line-height: 1.55; margin-bottom: 18px; }
+    .prob-loss {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(251,226,74,0.1); color: var(--yellow);
+      font-family: var(--ff-mono); font-size: 12px; font-weight: 600;
+      padding: 5px 12px; border-radius: var(--r-pill);
+    }
+
+    /* ── STEPS ── */
+    .steps-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+    .step-card {
+      background: var(--card2); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 32px 28px;
+    }
+    .step-n {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--yellow); color: var(--black);
+      font-family: var(--ff); font-size: 16px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 18px;
+    }
+    .step-card h3 {
+      font-family: var(--ff); font-size: 20px; font-weight: 600;
+      letter-spacing: -.015em; color: var(--fg);
+      margin-bottom: 10px; line-height: 1.2;
+    }
+    .step-card p { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
+    .step-badge { font-family: var(--ff-mono); font-size: 12px; color: var(--yellow); }
+
+    /* ── PRICING ── */
+    .price-wrap { max-width: 640px; margin: 0 auto; }
+    .price-card {
+      background: var(--card2); border: 1px solid var(--border-v);
+      border-radius: var(--r); overflow: hidden;
+    }
+    .price-top {
+      background: var(--yellow); padding: 40px 44px 36px;
+      text-align: center; border-bottom: none;
+    }
+    .price-badge {
+      display: inline-block; background: rgba(10,10,10,0.15);
+      color: var(--black); font-family: var(--ff-mono);
+      font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+      padding: 5px 14px; border-radius: var(--r-pill); margin-bottom: 20px;
+    }
+    .price-amount {
+      font-family: var(--ff); font-size: 88px; font-weight: 700;
+      letter-spacing: -.04em; color: var(--black); line-height: 1; margin-bottom: 8px;
+    }
+    .price-amount sup { font-size: 32px; font-weight: 700; vertical-align: super; }
+    .price-amount sub { font-size: 22px; font-weight: 500; color: rgba(10,10,10,0.6); }
+    .price-period { font-size: 14px; color: rgba(10,10,10,0.6); margin-bottom: 28px; }
+    .price-btn {
+      display: block; background: var(--black); color: var(--yellow);
+      font-family: var(--ff-text); font-size: 17px; font-weight: 700;
+      padding: 15px; border-radius: var(--r-pill); text-decoration: none;
+      text-align: center; transition: opacity .15s; margin-bottom: 12px;
+    }
+    .price-btn:hover { opacity: .85; }
+    .price-legal { font-size: 12px; color: rgba(10,10,10,0.5); }
+    .price-setup {
+      font-size: 12px;
+      color: rgba(10,10,10,0.45);
+      margin-bottom: 20px;
+      letter-spacing: 0.01em;
+    }
+    .price-feats {
+      padding: 32px 44px; display: grid;
+      grid-template-columns: 1fr 1fr; gap: 12px 20px;
+    }
+    .feat {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 14px; color: var(--fg-dim); line-height: 1.45;
+    }
+    .feat-chk {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--yellow); flex-shrink: 0; margin-top: 1px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .feat-chk svg { width: 9px; height: 9px; stroke: var(--black); stroke-width: 2.5; fill: none; }
+    .price-vs {
+      display: flex; align-items: center;
+      border: 1px solid var(--border); border-top: none;
+      border-radius: 0 0 var(--r) var(--r); overflow: hidden;
+    }
+    .vs-item { flex: 1; padding: 20px 24px; }
+    .vs-num {
+      font-family: var(--ff); font-size: 30px; font-weight: 700;
+      letter-spacing: -.02em; display: block;
+    }
+    .vs-num.loss { color: #ff453a; }
+    .vs-num.gain { color: var(--yellow); }
+    .vs-label { font-size: 11px; color: var(--muted); margin-top: 4px; display: block; line-height: 1.4; }
+    .vs-sep {
+      font-family: var(--ff); font-size: 18px; font-weight: 700;
+      color: var(--border-v); padding: 0 8px; flex-shrink: 0;
+    }
+
+    /* ── TESTIMONIALS ── */
+    .test-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; }
+    .test-card {
+      background: var(--card2); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 28px;
+    }
+    .test-metric {
+      font-family: var(--ff); font-size: 40px; font-weight: 700;
+      letter-spacing: -.025em; color: var(--yellow); margin-bottom: 10px;
+    }
+    .test-card blockquote {
+      font-size: 14px; color: var(--fg-dim); line-height: 1.6;
+      margin-bottom: 14px; font-style: italic;
+    }
+    .test-src { font-family: var(--ff-mono); font-size: 11px; color: var(--muted); font-style: normal; }
+
+    /* ── FAQ ── */
+    .faq-wrap { max-width: 640px; margin: 0 auto; }
+    details.faq-item { border-bottom: 1px solid var(--border); }
+    details.faq-item:first-child { border-top: 1px solid var(--border); }
+    summary.faq-q {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 0; gap: 16px; cursor: pointer;
+      font-family: var(--ff-text); font-size: 16px; color: var(--fg);
+      list-style: none; -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation; user-select: none;
+    }
+    summary.faq-q::-webkit-details-marker { display: none; }
+    .faq-ico {
+      width: 26px; height: 26px; border-radius: 50%;
+      border: 1px solid var(--border-v); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; color: var(--yellow);
+      transition: transform .2s ease;
+    }
+    details[open] .faq-ico { transform: rotate(45deg); }
+    .faq-body {
+      padding-bottom: 20px; font-size: 14px;
+      color: var(--muted); line-height: 1.65;
+    }
+
+    /* ── FORM ── */
+    .form-sec {
+      background: var(--card); border-top: 1px solid var(--border);
+      padding: 88px 20px;
+    }
+    .form-wrap { max-width: 600px; margin: 0 auto; }
+    .form-card {
+      background: var(--card2); border: 1px solid var(--border-v);
+      border-radius: var(--r); overflow: hidden;
+    }
+    .form-head {
+      padding: 32px 36px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .form-head h2 {
+      font-family: var(--ff); font-size: 26px; font-weight: 700;
+      letter-spacing: -.02em; color: var(--fg); margin-bottom: 6px;
+    }
+    .form-head p { font-size: 14px; color: var(--muted); line-height: 1.5; margin-bottom: 18px; }
+    .prog-row { display: flex; align-items: center; gap: 10px; }
+    .prog-lbl { font-family: var(--ff-mono); font-size: 11px; color: var(--muted); white-space: nowrap; }
+    .prog-bar {
+      flex: 1; height: 3px; background: var(--border);
+      border-radius: 99px; overflow: hidden;
+    }
+    .prog-fill {
+      height: 100%; background: var(--yellow);
+      border-radius: 99px; width: 25%; transition: width .3s ease;
+    }
+    .prog-pct { font-family: var(--ff-mono); font-size: 11px; color: var(--yellow); white-space: nowrap; }
+    .form-body { padding: 28px 36px; cursor: pointer; }
+    .f-step { display: none; cursor: pointer; }
+    .f-step.active { display: block; cursor: pointer; }
+    .f-step h3 {
+      font-family: var(--ff); font-size: 19px; font-weight: 600;
+      letter-spacing: -.015em; color: var(--fg); margin-bottom: 20px; line-height: 1.3;
+    }
+    .radio-g { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+    .radio-lbl {
+      display: flex; align-items: center; gap: 12px;
+      padding: 13px 16px; border: 1px solid var(--border);
+      border-radius: 10px; cursor: pointer; font-size: 14px; color: var(--fg-dim);
+      transition: all .15s; touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .radio-lbl:hover { border-color: var(--yellow); background: rgba(251,226,74,.04); }
+    .radio-lbl input[type="radio"] { display: none; }
+    .radio-lbl:has(input:checked) { border-color: var(--yellow); background: rgba(251,226,74,.07); color: var(--fg); }
+    .radio-dot {
+      width: 16px; height: 16px; border-radius: 50%;
+      border: 2px solid var(--border-v); flex-shrink: 0; transition: all .15s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .radio-lbl:has(input:checked) .radio-dot {
+      background: var(--yellow); border-color: var(--yellow);
+    }
+    .radio-lbl:has(input:checked) .radio-dot::after {
+      content: ''; width: 6px; height: 6px;
+      border-radius: 50%; background: var(--black);
+    }
+    .txt-f { margin-bottom: 14px; }
+    .txt-f label {
+      display: block; font-family: var(--ff-mono); font-size: 10px;
+      font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 7px;
+    }
+    .txt-f input {
+      width: 100%; background: rgba(244,244,240,.05);
+      border: 1px solid var(--border-v); border-radius: 10px;
+      padding: 12px 14px; font-family: var(--ff-text); font-size: 16px;
+      color: var(--fg); outline: none; transition: border-color .15s;
+    }
+    .txt-f input::placeholder { color: rgba(244,244,240,.22); }
+    .txt-f input:focus { border-color: rgba(251,226,74,.5); background: rgba(251,226,74,.03); }
+    .f-actions {
+      display: flex; justify-content: flex-end; align-items: center;
+      gap: 12px; margin-top: 16px; padding-top: 8px; flex-wrap: wrap;
+      cursor: pointer;
+    }
+    .f-actions .btn-back { margin-right: auto; }
+    @media (max-width: 480px) {
+      .btn-fwd { font-size: 15px; padding: 14px 20px; min-height: 48px; }
+      .f-actions { flex-wrap: wrap; }
+    }
+    .btn-fwd {
+      display: inline-block;
+      background: var(--yellow); color: var(--black);
+      font-family: var(--ff-text); font-size: 15px; font-weight: 700;
+      padding: 14px 24px; border-radius: var(--r-pill);
+      border: none; cursor: pointer; transition: background .15s;
+      touch-action: manipulation; text-decoration: none;
+      min-height: 48px; line-height: 1.2; text-align: center;
+    }
+    .btn-fwd:hover { background: var(--yellow-dark); }
+    .btn-back {
+      display: inline-block;
+      background: transparent; color: var(--muted);
+      font-family: var(--ff-text); font-size: 14px;
+      padding: 12px 0; border: none; cursor: pointer;
+      transition: color .15s; touch-action: manipulation;
+      text-decoration: none;
+    }
+    .btn-back:hover { color: var(--fg); }
+    .f-success { display: none; text-align: center; padding: 48px 20px; }
+    .f-success.active { display: block; }
+    .suc-mark {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: var(--yellow); display: flex; align-items: center;
+      justify-content: center; margin: 0 auto 18px;
+      font-size: 22px; color: var(--black);
+    }
+    .f-success h3 {
+      font-family: var(--ff); font-size: 24px; font-weight: 700;
+      color: var(--fg); margin-bottom: 10px;
+    }
+    .f-success p { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 24px; max-width: 380px; margin-left: auto; margin-right: auto; }
+    .suc-btn {
+      display: inline-block; background: var(--yellow); color: var(--black);
+      font-family: var(--ff-text); font-size: 15px; font-weight: 700;
+      padding: 12px 24px; border-radius: var(--r-pill); text-decoration: none;
+    }
+
+    /* ── FINAL CTA ── */
+    .cta-sec {
+      background: var(--black); text-align: center;
+      padding: 96px 20px; border-top: 1px solid var(--border);
+    }
+    .cta-sec h2 {
+      font-family: var(--ff); font-size: clamp(28px,4vw,48px);
+      font-weight: 700; letter-spacing: -.025em; color: var(--fg);
+      line-height: 1.1; margin-bottom: 14px;
+    }
+    .cta-sec p { font-size: 17px; color: var(--muted); margin-bottom: 36px; }
+    .cta-note { margin-top: 14px; font-size: 12px; color: var(--muted); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--card); border-top: 1px solid var(--border);
+      padding: 22px 20px; text-align: center;
+    }
+    footer p { font-size: 12px; color: var(--muted); line-height: 1.9; }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--yellow); }
+
+    /* ════════════════════════════════
+       MOBILE
+       ════════════════════════════════ */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hero { padding: 52px 16px 68px; }
+      .hero-btns { flex-direction: column; align-items: center; }
+      .btn-p, .btn-s { width: 100%; max-width: 320px; text-align: center; font-size: 16px; }
+      .stats { grid-template-columns: repeat(2,1fr); }
+      .stat { padding: 20px 12px; }
+      .stat-n { font-size: 24px; }
+      .stat-l { font-size: 11px; }
+      .sec { padding: 60px 16px; }
+      .sec-sub { margin-bottom: 40px; }
+      .prob-grid { grid-template-columns: 1fr; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .price-top { padding: 32px 24px 28px; }
+      .price-amount { font-size: 64px; }
+      .price-feats { grid-template-columns: 1fr; padding: 24px 24px; }
+      .price-vs { flex-direction: column; }
+      .vs-item { padding: 16px 20px; }
+      .test-grid { grid-template-columns: 1fr; }
+      .test-metric { font-size: 32px; }
+      .form-sec { padding: 60px 16px; }
+      .form-head { padding: 24px 20px 18px; }
+      .form-body { padding: 22px 20px; }
+      .form-head h2 { font-size: 21px; }
+      .cta-sec { padding: 64px 16px; }
+      .cta-sec p { font-size: 15px; }
+      footer p { font-size: 11px; }
+    }
+
+    @media (max-width: 480px) {
+      nav { height: 48px; }
+      .nav-inner { padding: 0 14px; }
+      .nav-cta { font-size: 12px; padding: 6px 12px; }
+      .hero { padding: 44px 14px 56px; }
+      .hero-note { font-size: 12px; }
+      .stats { grid-template-columns: repeat(2,1fr); }
+      .stat-n { font-size: 20px; }
+      .sec { padding: 48px 14px; }
+      .sec-title { font-size: clamp(22px,7vw,32px); }
+      .price-amount { font-size: 52px; }
+      .price-top { padding: 28px 18px 22px; }
+      .price-feats { padding: 20px 18px; }
+      .form-head { padding: 20px 16px 16px; }
+      .form-body { padding: 18px 16px; }
+      .f-step h3 { font-size: 16px; }
+      .radio-lbl { font-size: 13px; padding: 11px 14px; }
+    }
+  
+  
+    .setup-box {
+      background: rgba(10,10,10,0.3);
+      border: 1px solid rgba(251,226,74,0.25);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+    .setup-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .setup-label {
+      font-family: var(--ff-mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(10,10,10,0.5);
+    }
+    .setup-price {
+      font-family: var(--ff);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--black);
+    }
+    .setup-feats {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .setup-feats li {
+      font-size: 12px;
+      color: rgba(10,10,10,0.65);
+      padding-left: 14px;
+      position: relative;
+      line-height: 1.4;
+    }
+    .setup-feats li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--black);
+      font-size: 10px;
+    }
+    @media (max-width: 480px) {
+      .setup-box { padding: 14px 16px; }
+    }
+
+  
+/* KONFIGURATOR */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#06060a;--bg2:#0d0d14;--bg3:#13131e;
+  --card:#111118;--card2:#181820;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.1);
+  --yellow:#fbe24a;--yellow2:#ffe566;--yellow-dim:rgba(251,226,74,0.07);
+  --fg:#eeeef4;--fg2:#9090a8;--fg3:#55556a;--fg4:#33333f;
+  --green:#3ddc84;--green-dim:rgba(61,220,132,0.1);
+  --red:#ff6b6b;--red-dim:rgba(255,107,107,0.08);
+  --font-head:'Syne',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+  --font-body:'DM Sans',sans-serif;
+  --r:10px;--r2:16px;--r3:24px;
+}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font-body);background:var(--bg);color:var(--fg);-webkit-font-smoothing:antialiased;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(251,226,74,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(251,226,74,0.02) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;height:56px;display:flex;align-items:center;background:rgba(6,6,10,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-inner{max-width:1100px;width:100%;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;}
+.nav-logo-mark{width:26px;height:26px;background:var(--yellow);border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:11px;font-weight:800;color:#06060a;}
+.nav-logo-text{font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--fg);}
+.nav-logo-text span{color:var(--yellow);}
+.nav-badge{font-family:var(--font-mono);font-size:10px;color:var(--fg3);background:var(--card2);border:1px solid var(--border);padding:4px 10px;border-radius:100px;}
+
+/* LAYOUT */
+.layout{max-width:1100px;margin:0 auto;padding:32px 24px 80px;display:grid;grid-template-columns:1fr 1fr;gap:24px;position:relative;z-index:1;align-items:start;}
+
+/* PANEL */
+.panel{background:var(--card);border:1px solid var(--border2);border-radius:var(--r3);overflow:hidden;}
+.panel-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);background:var(--card2);display:flex;align-items:center;justify-content:space-between;}
+.panel-title{font-family:var(--font-head);font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--fg2);display:flex;align-items:center;gap:8px;}
+.panel-title-dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);}
+.panel-body{padding:24px;}
+
+/* PROGRESS */
+.progress-wrap{margin-bottom:24px;}
+.progress-steps{display:flex;gap:4px;margin-bottom:8px;}
+.progress-step{flex:1;height:3px;border-radius:99px;background:var(--border2);transition:background .3s;}
+.progress-step.active{background:var(--yellow);}
+.progress-step.done{background:rgba(251,226,74,0.35);}
+.progress-label{font-family:var(--font-mono);font-size:10px;color:var(--fg3);display:flex;justify-content:space-between;}
+
+/* SECTIONS */
+.section{display:none;}
+.section.active{display:block;}
+.section-eye{font-family:var(--font-mono);font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--yellow);margin-bottom:6px;}
+.section-title{font-family:var(--font-head);font-size:22px;font-weight:700;letter-spacing:-.01em;color:var(--fg);margin-bottom:4px;}
+.section-sub{font-size:13px;color:var(--fg2);margin-bottom:24px;line-height:1.55;font-weight:300;}
+
+/* FIELDS */
+.field{margin-bottom:16px;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.field-label{display:flex;align-items:center;justify-content:space-between;font-family:var(--font-mono);font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--fg3);margin-bottom:7px;}
+.field-required{color:var(--yellow);font-size:10px;}
+.field-hint{font-size:10px;color:var(--fg4);text-transform:none;letter-spacing:0;font-family:var(--font-body);}
+.field input,.field select,.field textarea{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:11px 14px;font-family:var(--font-body);font-size:14px;color:var(--fg);outline:none;transition:border-color .15s,background .15s;resize:none;}
+.field input::placeholder,.field textarea::placeholder{color:var(--fg4);}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(251,226,74,.45);background:rgba(251,226,74,.02);}
+.field select option{background:#13131e;}
+.field textarea{min-height:80px;line-height:1.55;}
+
+/* COLOR PICKER */
+.color-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;}
+.color-swatch{width:32px;height:32px;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:all .15s;position:relative;flex-shrink:0;}
+.color-swatch.selected{border-color:var(--fg);transform:scale(1.1);}
+.color-swatch.selected::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
+.color-custom{width:100%;height:36px;border:1px solid var(--border2);border-radius:8px;background:var(--bg3);cursor:pointer;padding:2px;margin-top:8px;}
+
+/* PLATFORM GRID */
+.platform-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.platform-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:10px;}
+.platform-item:hover{border-color:var(--border2);}
+.platform-item.selected{border-color:rgba(251,226,74,.4);background:rgba(251,226,74,.06);}
+.platform-item input[type="radio"]{display:none;}
+.platform-icon{font-size:18px;flex-shrink:0;}
+.platform-name{font-size:13px;color:var(--fg2);font-weight:500;}
+.platform-item.selected .platform-name{color:var(--fg);}
+
+/* FAQ */
+.faq-list{display:flex;flex-direction:column;gap:10px;margin-bottom:12px;}
+.faq-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:14px;}
+.faq-item-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.faq-n{font-family:var(--font-mono);font-size:10px;font-weight:500;color:var(--yellow);background:var(--yellow-dim);border:1px solid rgba(251,226,74,.2);padding:3px 8px;border-radius:4px;white-space:nowrap;}
+.faq-remove{margin-left:auto;background:transparent;border:none;color:var(--fg4);cursor:pointer;font-size:16px;padding:2px 6px;border-radius:4px;transition:all .15s;line-height:1;}
+.faq-remove:hover{color:var(--red);background:var(--red-dim);}
+.faq-item input,.faq-item textarea{width:100%;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-family:var(--font-body);font-size:13px;color:var(--fg);outline:none;transition:border-color .15s;resize:none;margin-bottom:8px;}
+.faq-item input:last-child,.faq-item textarea:last-child{margin-bottom:0;}
+.faq-item input::placeholder,.faq-item textarea::placeholder{color:var(--fg4);}
+.faq-item input:focus,.faq-item textarea:focus{border-color:rgba(251,226,74,.4);}
+.faq-add-btn{width:100%;background:transparent;border:1px dashed var(--border2);border-radius:var(--r);padding:10px;font-family:var(--font-body);font-size:13px;color:var(--fg3);cursor:pointer;transition:all .15s;}
+.faq-add-btn:hover{border-color:rgba(251,226,74,.3);color:var(--yellow);background:var(--yellow-dim);}
+
+/* CHECKBOX */
+.checkbox-item{display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .15s;margin-bottom:10px;}
+.checkbox-item:hover{border-color:var(--border2);}
+.checkbox-item.checked{border-color:rgba(61,220,132,.3);background:var(--green-dim);}
+.checkbox-item input[type="checkbox"]{display:none;}
+.checkbox-box{width:20px;height:20px;border-radius:5px;border:2px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;margin-top:1px;}
+.checkbox-item.checked .checkbox-box{background:var(--green);border-color:var(--green);}
+.checkbox-item.checked .checkbox-box::after{content:'✓';font-size:11px;font-weight:700;color:#fff;}
+.checkbox-text{font-size:13px;color:var(--fg2);line-height:1.55;}
+.checkbox-text a{color:var(--yellow);text-decoration:none;}
+.checkbox-text a:hover{text-decoration:underline;}
+.checkbox-item.checked .checkbox-text{color:var(--fg);}
+
+/* NAV BUTTONS */
+.form-nav{display:flex;justify-content:space-between;align-items:center;margin-top:24px;padding-top:20px;border-top:1px solid var(--border);}
+.btn-back{background:transparent;color:var(--fg3);border:none;font-family:var(--font-body);font-size:14px;cursor:pointer;padding:10px 0;transition:color .15s;}
+.btn-back:hover{color:var(--fg);}
+.btn-next{background:var(--yellow);color:#06060a;border:none;font-family:var(--font-head);font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:12px 28px;border-radius:100px;cursor:pointer;transition:all .15s;}
+.btn-next:hover{background:var(--yellow2);transform:translateY(-1px);}
+.btn-generate{background:var(--yellow);color:#06060a;border:none;font-family:var(--font-head);font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:12px 28px;border-radius:100px;cursor:pointer;transition:all .2s;box-shadow:0 0 32px rgba(251,226,74,.2);}
+.btn-generate:hover{background:var(--yellow2);transform:translateY(-1px);}
+
+/* PREVIEW PANEL */
+.preview-panel{position:sticky;top:72px;}
+.preview-tabs{display:flex;border-bottom:1px solid var(--border);}
+.preview-tab{flex:1;padding:12px;text-align:center;cursor:pointer;font-family:var(--font-mono);font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--fg3);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s;background:transparent;border-top:none;border-left:none;border-right:none;}
+.preview-tab.active{color:var(--yellow);border-bottom-color:var(--yellow);}
+
+/* CHAT PREVIEW */
+.chat-preview{padding:20px;}
+.chat-mock{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;}
+.chat-mock-header{padding:12px 16px;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.mock-avatar{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:background .3s;}
+.mock-name{font-size:13px;font-weight:600;color:var(--fg);}
+.mock-status{font-size:10px;color:var(--green);display:flex;align-items:center;gap:4px;margin-top:2px;}
+.mock-status::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);display:inline-block;}
+.chat-mock-body{padding:16px;display:flex;flex-direction:column;gap:8px;min-height:160px;}
+.mock-msg{max-width:80%;}
+.mock-msg.bot{align-self:flex-start;}
+.mock-msg.user{align-self:flex-end;}
+.mock-bubble{padding:9px 13px;border-radius:10px;font-size:13px;line-height:1.5;}
+.mock-msg.bot .mock-bubble{background:var(--card2);border:.5px solid var(--border2);color:var(--fg2);}
+.mock-msg.user .mock-bubble{color:#06060a;font-weight:500;}
+.chat-mock-input{padding:12px 14px;border-top:1px solid var(--border);display:flex;gap:8px;background:var(--bg);}
+.mock-input-field{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:8px 12px;font-size:12px;color:var(--fg3);}
+.mock-send{border:none;border-radius:7px;padding:8px 14px;font-size:11px;font-weight:700;cursor:default;transition:background .3s;color:#06060a;}
+
+/* CODE / EMAIL TABS */
+.code-view{display:none;padding:20px;}
+.code-block{background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);padding:20px;font-family:var(--font-mono);font-size:11px;color:var(--fg2);line-height:1.7;white-space:pre-wrap;word-break:break-all;max-height:280px;overflow-y:auto;}
+.code-block::-webkit-scrollbar{width:3px;}
+.code-block::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.code-actions{display:flex;gap:8px;margin-top:14px;}
+.code-btn{flex:1;padding:11px;border-radius:var(--r);font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .15s;border:none;}
+.code-btn.copy{background:var(--yellow);color:#06060a;}
+.code-btn.copy:hover{background:var(--yellow2);}
+.code-btn.dl{background:var(--card2);color:var(--fg2);border:1px solid var(--border2);}
+.code-btn.dl:hover{color:var(--fg);}
+.copy-ok{display:none;text-align:center;font-family:var(--font-mono);font-size:11px;color:var(--green);margin-top:8px;}
+
+.email-view{display:none;padding:20px;}
+.email-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);padding:20px;font-size:13px;color:var(--fg2);line-height:1.7;}
+.email-subject{font-family:var(--font-mono);font-size:10px;color:var(--fg3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.email-body{white-space:pre-line;}
+.email-actions{display:flex;gap:8px;margin-top:14px;}
+.email-btn{flex:1;padding:11px;border-radius:var(--r);font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .15s;border:none;}
+.email-btn.copy{background:var(--yellow);color:#06060a;}
+.email-btn.copy:hover{background:var(--yellow2);}
+
+/* SUCCESS */
+.success-state{display:none;text-align:center;padding:48px 24px;}
+.success-state.active{display:block;}
+.suc-icon{font-size:40px;margin-bottom:16px;display:block;}
+.suc-title{font-family:var(--font-head);font-size:22px;font-weight:700;color:var(--fg);margin-bottom:8px;}
+.suc-sub{font-size:14px;color:var(--fg2);line-height:1.6;margin-bottom:24px;font-weight:300;}
+.suc-btn{display:inline-block;background:var(--yellow);color:#06060a;font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:12px 24px;border-radius:100px;text-decoration:none;cursor:pointer;border:none;margin:4px;}
+
+/* REVIEW */
+.review-list{display:flex;flex-direction:column;gap:6px;margin-bottom:20px;}
+.review-item{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--fg2);background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;}
+.review-dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);flex-shrink:0;}
+.review-key{font-family:var(--font-mono);font-size:10px;color:var(--fg3);min-width:100px;}
+
+
+
+
+.avatar-item:hover{border-color:var(--border2);}
+.avatar-item.selected{border-color:rgba(251,226,74,.5);background:rgba(251,226,74,.06);}
+
+
+.avatar-item.selected 
+
+/* MOBILE */
+@media(max-width:900px){.layout{grid-template-columns:1fr;}.preview-panel{position:static;}}
+@media(max-width:480px){.layout{padding:20px 16px 60px;}.panel-body{padding:18px;}.field-row{grid-template-columns:1fr;}.platform-grid{grid-template-columns:1fr;}}
+
+</style>
+</head>
+<body>
+<form name="testzugang" netlify netlify-honeypot="bot-field" hidden>
+  <input type="text" name="name">
+  <input type="text" name="company">
+  <input type="email" name="email">
+  <input type="tel" name="phone">
+  <input type="text" name="gewerk">
+  <input type="text" name="zeitfresser">
+  <input type="text" name="ziel">
+</form>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a class="nav-logo" href="#" style="display:flex;align-items:center;"><svg width="160" height="28" viewBox="0 0 200 36" role="img" xmlns="http://www.w3.org/2000/svg">
+  <title>JAYAMO AI</title>
+  <!-- Hexagonal mark -->
+  <!-- Center hex - filled accent -->
+  <polygon points="22,6 32,0 42,6 42,18 32,24 22,18" fill="none" stroke="#fbe24a" stroke-width="1.5"/>
+  <circle cx="32" cy="12" r="4" fill="#fbe24a"/>
+  <!-- Left hex -->
+  <polygon points="2,6 12,0 22,6 22,18 12,24 2,18" fill="none" stroke="#fbe24a" stroke-width="1" opacity="0.4"/>
+  <circle cx="12" cy="12" r="2.5" fill="#fbe24a" opacity="0.4"/>
+  <!-- Right hex -->
+  <polygon points="42,6 52,0 62,6 62,18 52,24 42,18" fill="none" stroke="#fbe24a" stroke-width="1" opacity="0.4"/>
+  <circle cx="52" cy="12" r="2.5" fill="#fbe24a" opacity="0.4"/>
+  <!-- Wordmark -->
+  <text x="72" y="18" font-family="Helvetica Neue,Arial,sans-serif" font-size="15" font-weight="700" fill="#f4f4f0" letter-spacing="0.04em">JAYAMO <tspan fill="#fbe24a">AI</tspan></text>
+</svg></a>
+    <ul class="nav-links">
+      <li><a href="#problem">Problem</a></li>
+      <li><a href="#ablauf">Ablauf</a></li>
+      <li><a href="#preise">Preise</a></li>
+    </ul>
+    <a class="nav-cta" href="#antrag">4 Wochen kostenlos</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <span class="hero-eye">Für Handwerksbetriebe im DACH-Raum</span>
+  <h1>Kein Auftrag geht<br><em>verloren.</em></h1>
+  <p class="hero-sub">Ihr Kunde ruft an während Sie auf der Baustelle sind. JAYAMO AI nimmt ab — 24 Stunden, 7 Tage, automatisch.</p>
+  <div class="hero-btns">
+    <a class="btn-p" href="#antrag">4 Wochen kostenlos starten</a>
+    <a class="btn-s" href="demo-chat.html">Demo ansehen</a>
+  </div>
+  <p class="hero-note">Code einbinden · 5 Minuten · Kein Vertrag</p>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat"><span class="stat-n">3.200 €</span><span class="stat-l">Ø monatlicher Verlust durch verpasste Anfragen</span></div>
+  <div class="stat"><span class="stat-n">24/7</span><span class="stat-l">Erreichbarkeit ohne Mehraufwand</span></div>
+  <div class="stat"><span class="stat-n">&lt; 5 Min</span><span class="stat-l">Einrichtung per Code</span></div>
+  <div class="stat"><span class="stat-n">28 Tage</span><span class="stat-l">kostenloser Testbetrieb</span></div>
+</div>
+
+<!-- PROBLEM -->
+<section class="sec" id="problem">
+  <div class="sec-inner">
+    <span class="sec-eye">Das Problem</span>
+    <h2 class="sec-title">Sie kennen diese Szene.<br>Vermutlich täglich.</h2>
+    <p class="sec-sub">Jeder verpasste Anruf ist ein verlorener Auftrag.</p>
+    <div class="prob-grid">
+      <div class="prob-card">
+        <div class="prob-time">09:42</div>
+        <div class="prob-scene">Baustelle</div>
+        <h3>Beide Hände im Heizungskeller.</h3>
+        <p>Telefon klingelt. Sie können nicht ran. Der Kunde wählt die Nummer darunter — den Mitbewerber.</p>
+        <span class="prob-loss">Verloren · 380 €</span>
+      </div>
+      <div class="prob-card">
+        <div class="prob-time">14:15</div>
+        <div class="prob-scene">Büro</div>
+        <h3>Dritter Rückruf wegen Preisauskunft.</h3>
+        <p>Preissucher binden Zeit die Sie nicht haben. Aus dem Gespräch wird nie ein Auftrag.</p>
+        <span class="prob-loss">Verloren · 15 Std./Mo.</span>
+      </div>
+      <div class="prob-card">
+        <div class="prob-time">18:30</div>
+        <div class="prob-scene">Feierabend</div>
+        <h3>Halb ausgefülltes Formular.</h3>
+        <p>Maße fehlen, Anschrift unklar. Mühsames Nachfragen. Die Hälfte antwortet nie wieder.</p>
+        <span class="prob-loss">Abbruch · ≈ 40 %</span>
+      </div>
+      <div class="prob-card">
+        <div class="prob-time">23:08</div>
+        <div class="prob-scene">Notfall</div>
+        <h3>Rohrbruch. Heizung aus. Niemand da.</h3>
+        <p>Nachts sind die besten Aufträge — und ohne Notdienst gehen sie an den Nachbarbetrieb.</p>
+        <span class="prob-loss">Verpasst · 3 Notfälle/Mo.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABLAUF -->
+<section class="sec sec-alt" id="ablauf">
+  <div class="sec-inner">
+    <span class="sec-eye">Der Ablauf</span>
+    <h2 class="sec-title">In drei Schritten zu<br>messbaren Ergebnissen.</h2>
+    <p class="sec-sub">Kein IT-Projekt. Kein Techniker-Besuch. Ein Code, fertig.</p>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-n">1</div>
+        <h3>Einrichten.</h3>
+        <p>Code auf Ihrer Website einbinden — fertig. Anfragen werden ab Sekunde eins strukturiert erfasst: Gewerk, Schaden, Ort, Dringlichkeit.</p>
+        <span class="step-badge">Aufwand &lt; 5 Minuten</span>
+      </div>
+      <div class="step-card">
+        <div class="step-n">2</div>
+        <h3>Beobachten.</h3>
+        <p>Vier Wochen Echtbetrieb. Der Assistent qualifiziert Anfragen, filtert Preissucher und sortiert Notfälle vor. Sie arbeiten weiter.</p>
+        <span class="step-badge">Kosten 0,00 €</span>
+      </div>
+      <div class="step-card">
+        <div class="step-n">3</div>
+        <h3>Entscheiden.</h3>
+        <p>Nach 28 Tagen liegt Ihr Effizienzbericht vor: eingesparte Stunden, gesicherte Aufträge, geretteter Umsatz. Erst dann entscheiden Sie.</p>
+        <span class="step-badge">Auswertung nach 28 Tagen</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="sec" id="preise">
+  <div class="sec-inner">
+    <span class="sec-eye">Preise</span>
+    <h2 class="sec-title">Ein Preis.<br>Keine Überraschungen.</h2>
+    <p class="sec-sub">Vier Wochen kostenlos testen. Danach entscheiden Sie.</p>
+    <div class="price-wrap">
+      <div class="price-card">
+        <div class="price-top">
+          <span class="price-badge">Die ersten 4 Wochen kostenlos</span>
+          <div class="price-amount"><sup>€</sup>149<sub>/Mo</sub></div>
+          <p class="price-period">Monatlich kündbar · Keine Mindestlaufzeit · zzgl. MwSt.</p>
+          <div class="setup-box">
+            <div class="setup-top">
+              <span class="setup-label">Einmalig · Einrichtungspaket</span>
+              <span class="setup-price">199 €</span>
+            </div>
+            <ul class="setup-feats">
+              <li>Chatbot individuell auf Ihr Gewerk konfiguriert</li>
+              <li>FAQ-Wissensdatenbank mit 10 Fragen befüllt</li>
+              <li>Einbettungscode fertig für Ihre Website</li>
+            </ul>
+          </div>
+          <a class="price-btn" href="#antrag">Jetzt kostenlos starten</a>
+          <p class="price-legal">Kein Abo · Kein Risiko · DSGVO-konform</p>
+        </div>
+        <div class="price-feats">
+          <div class="feat"><div class="feat-chk"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div><span>Unbegrenzte Anfragen 24/7</span></div>
+          <div class="feat"><div class="feat-chk"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div><span>Terminanfragen automatisch aufnehmen</span></div>
+          <div class="feat"><div class="feat-chk"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div><span>Rückrufe erfassen und weiterleiten</span></div>
+          <div class="feat"><div class="feat-chk"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div><span>Notfälle sofort auf Ihr Handy</span></div>
+          <div class="feat"><div class="feat-chk"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div><span>FAQ automatisch beantworten</span></div>
+          <div class="feat"><div class="feat-chk"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div><span>Einrichtung per Code · unter 5 Min · selbst</span></div>
+          <div class="feat"><div class="feat-chk"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div><span>Effizienzbericht nach 28 Tagen</span></div>
+          <div class="feat"><div class="feat-chk"><svg viewBox="0 0 12 12"><polyline points="1.5,6 4.5,9 10.5,3"/></svg></div><span>DSGVO-konform · Server Deutschland</span></div>
+        </div>
+        <div class="price-vs">
+          <div class="vs-item"><span class="vs-num loss">3.200 €</span><span class="vs-label">Ø monatlicher Verlust durch verpasste Anfragen</span></div>
+          <div class="vs-sep">vs.</div>
+          <div class="vs-item"><span class="vs-num gain">149 €</span><span class="vs-label">Ihr monatlicher Beitrag nach der Testphase</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="sec sec-alt">
+  <div class="sec-inner">
+    <span class="sec-eye">Aus der Praxis</span>
+    <h2 class="sec-title">Was Meisterbetriebe<br>nach vier Wochen berichten.</h2>
+    <p class="sec-sub" style="font-size:12px;margin-bottom:40px;">* Beispielhafte Ergebnisse aus der Testphase</p>
+    <div class="test-grid">
+      <div class="test-card">
+        <div class="test-metric">22 h</div>
+        <blockquote>„Wir waren skeptisch. Der Bericht nach vier Wochen hat uns die Augen geöffnet — exakt gezählt, wie viele Stunden Telefongeplänkel weggefallen sind."</blockquote>
+        <cite class="test-src">M. Brinkmann · SHK-Meisterbetrieb · Münsterland</cite>
+      </div>
+      <div class="test-card">
+        <div class="test-metric">+3</div>
+        <blockquote>„Das System hat Anfragen aufgefangen die ich vorher nie gesehen habe — nachts, am Wochenende. Drei Aufträge allein im ersten Monat."</blockquote>
+        <cite class="test-src">T. Held · Dachdeckerei · Schwarzwald</cite>
+      </div>
+      <div class="test-card">
+        <div class="test-metric">0 €</div>
+        <blockquote>„Kein Verkaufsdruck, nur Fakten. Vier Wochen im harten Wintergeschäft getestet, danach ein klares Zahlen-PDF."</blockquote>
+        <cite class="test-src">A. Schreiber · Elektromeisterbetrieb · Oberbayern</cite>
+      </div>
+      <div class="test-card">
+        <div class="test-metric">24/7</div>
+        <blockquote>„Rohrbruch um Mitternacht. Der Kunde hat geschrieben, das System hat qualifiziert und direkt auf mein Handy durchgestellt."</blockquote>
+        <cite class="test-src">F. Reiter · Installateurmeister · Tirol</cite>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="sec">
+  <div class="sec-inner">
+    <span class="sec-eye">Häufige Fragen</span>
+    <h2 class="sec-title">Alles geklärt.</h2>
+    <div class="faq-wrap">
+      <details class="faq-item">
+        <summary class="faq-q"><span>Entstehen nach den vier Wochen automatisch Kosten?</span><span class="faq-ico">+</span></summary>
+        <div class="faq-body">Nein. Die Testphase endet nach exakt 28 Tagen vollautomatisch. Kein Abo, keine automatische Verlängerung. Sie entscheiden erst, wenn der Effizienzbericht mit Ihren echten Einsparungen vorliegt.</div>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q"><span>Was steht im Effizienzbericht?</span><span class="faq-ico">+</span></summary>
+        <div class="faq-body">Der Bericht zeigt alle aufgenommenen Anfragen, gesparte Stunden, Notfälle die weitergeleitet wurden und eine Schätzung des gesicherten Umsatzes — konkret, auf Basis Ihrer echten Zahlen.</div>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q"><span>Wie hoch ist der Aufwand beim Einrichten?</span><span class="faq-ico">+</span></summary>
+        <div class="faq-body">Sie erhalten einen Code den Sie auf Ihrer Website einbinden. Das dauert unter 5 Minuten. Funktioniert mit WordPress, Wix, Shopify und jeder eigenen Seite.</div>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q"><span>Funktioniert das auch für Notdienste in der Nacht?</span><span class="faq-ico">+</span></summary>
+        <div class="faq-body">Ja. Der Assistent ist 24/7 aktiv. Notfälle werden sofort erkannt, qualifiziert und direkt auf Ihr Handy weitergeleitet — auch um Mitternacht.</div>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-q"><span>Ist das System DSGVO-konform?</span><span class="faq-ico">+</span></summary>
+        <div class="faq-body">Ja. Alle Daten werden auf Servern in Deutschland verarbeitet und gespeichert. Das System entspricht der DSGVO vollständig.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- FORM -->
+<section class="form-sec" id="antrag">
+  <div style="max-width:1100px;margin:0 auto;padding:0 24px;">
+    <div style="text-align:center;margin-bottom:40px;">
+      <span class="sec-eye" style="display:block;margin-bottom:12px;">Jetzt starten</span>
+      <h2 class="sec-title" style="margin-bottom:12px;">Bot konfigurieren &amp;<br>Code sofort erhalten.</h2>
+      <p style="font-size:16px;color:var(--fg2);font-weight:300;max-width:480px;margin:0 auto;">Alle Daten eingeben — Assistent personalisieren — Code kopieren — fertig. Kein Warten, kein Rückruf.</p>
+    </div>
+    <div class="layout" style="padding:0;">
+
+      <!-- LINKE SPALTE: FORMULAR -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><div class="panel-title-dot"></div>Bot-Konfigurator</div>
+          <div style="font-family:var(--font-mono);font-size:10px;color:var(--fg3);" id="step-counter">01 / 06</div>
+        </div>
+        <div class="panel-body">
+
+          <div class="progress-wrap">
+            <div class="progress-steps">
+              <div class="progress-step active" id="ps1"></div>
+              <div class="progress-step" id="ps2"></div>
+              <div class="progress-step" id="ps3"></div>
+              <div class="progress-step" id="ps4"></div>
+              <div class="progress-step" id="ps5"></div>
+              <div class="progress-step" id="ps6"></div>
+            </div>
+            <div class="progress-label"><span id="prog-label">Betrieb &amp; Kontakt</span><span id="prog-pct">17%</span></div>
+          </div>
+
+          <!-- SECTION 1 -->
+          <div class="section active" id="sec1">
+            <div class="section-eye">Schritt 01</div>
+            <div class="section-title">Betrieb &amp; Kontakt</div>
+            <div class="section-sub">Grunddaten für die Personalisierung und die Code-Zustellung.</div>
+            <div class="field-row">
+              <div class="field">
+                <div class="field-label">Betriebsname <span class="field-required">*</span></div>
+                <input type="text" id="f-betrieb" placeholder="Mustermann SHK GmbH" oninput="updatePreview()" maxlength="60">
+              </div>
+              <div class="field">
+                <div class="field-label">Name des Inhabers <span class="field-required">*</span></div>
+                <input type="text" id="f-inhaber" placeholder="Max Mustermann" maxlength="60">
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <div class="field-label">E-Mail <span class="field-required">*</span><span class="field-hint">Für Code-Zustellung</span></div>
+                <input type="email" id="f-email" placeholder="max@mustermann.de">
+              </div>
+              <div class="field">
+                <div class="field-label">Telefon <span class="field-required">*</span></div>
+                <input type="tel" id="f-tel" placeholder="+49 89 12345678" oninput="updatePreview()">
+              </div>
+            </div>
+            <div class="field">
+              <div class="field-label">Website-URL <span class="field-hint">Wo der Bot eingebunden wird</span></div>
+              <input type="text" id="f-website" placeholder="https://mustermann-shk.de">
+            </div>
+            <div class="form-nav">
+              <span></span>
+              <button class="btn-next" onclick="goSection(2)">Weiter — Gewerk →</button>
+            </div>
+          </div>
+
+          <!-- SECTION 2 -->
+          <div class="section" id="sec2">
+            <div class="section-eye">Schritt 02</div>
+            <div class="section-title">Gewerk &amp; Einsatz</div>
+            <div class="section-sub">Womit der Assistent konfrontiert wird.</div>
+            <div class="field-row">
+              <div class="field">
+                <div class="field-label">Hauptgewerk <span class="field-required">*</span></div>
+                <select id="f-gewerk" onchange="updatePreview()">
+                  <option value="SHK">Sanitär, Heizung &amp; Klima</option>
+                  <option value="Elektro">Elektrotechnik &amp; PV</option>
+                  <option value="Dach">Dachdeckerei &amp; Zimmerei</option>
+                  <option value="Maler">Maler &amp; Lackierer</option>
+                  <option value="Bau">Hoch- &amp; Tiefbau</option>
+                  <option value="Fliesen">Fliesen &amp; Naturstein</option>
+                  <option value="Trockenbau">Trockenbau &amp; Innenausbau</option>
+                  <option value="Mehrere">Mehrere Gewerke</option>
+                </select>
+              </div>
+              <div class="field">
+                <div class="field-label">Einsatzgebiet <span class="field-required">*</span></div>
+                <input type="text" id="f-region" placeholder="München &amp; 80 km Umkreis" oninput="updatePreview()" maxlength="80">
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <div class="field-label">Öffnungszeiten</div>
+                <input type="text" id="f-zeiten" placeholder="Mo–Fr 7–18 Uhr, Sa 8–13 Uhr" maxlength="100">
+              </div>
+              <div class="field">
+                <div class="field-label">Notdienst-Nummer <span class="field-hint">Für Notfälle</span></div>
+                <input type="tel" id="f-notfall" placeholder="+49 89 99999999" oninput="updatePreview()">
+              </div>
+            </div>
+            <div class="field">
+              <div class="field-label">Sprache des Bots</div>
+              <select id="f-sprache">
+                <option value="Deutsch">Deutsch (Standard)</option>
+                <option value="Österreichisch">Österreichisches Deutsch</option>
+                <option value="Schweizerdeutsch">Schweizerdeutsch</option>
+              </select>
+            </div>
+            <div class="form-nav">
+              <button class="btn-back" onclick="goSection(1)">← Zurück</button>
+              <button class="btn-next" onclick="goSection(3)">Weiter — Bot-Design →</button>
+            </div>
+          </div>
+
+          <!-- SECTION 3 -->
+          <div class="section" id="sec3">
+            <div class="section-eye">Schritt 03</div>
+            <div class="section-title">Bot-Persönlichkeit</div>
+            <div class="section-sub">Wie Ihr Assistent heißt, spricht und aussieht.</div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <div class="field-label">Name des Bots <span class="field-required">*</span></div>
+                <input type="text" id="f-botname" placeholder="Sophie" oninput="updatePreview()" maxlength="30">
+              </div>
+              <div class="field">
+                <div class="field-label">Primärfarbe</div>
+                <div class="color-row" id="color-row">
+                  <div class="color-swatch selected" style="background:#fbe24a;color:#000;" data-color="#fbe24a" onclick="selectColor('#fbe24a',this)">✓</div>
+                  <div class="color-swatch" style="background:#3b82f6;" data-color="#3b82f6" onclick="selectColor('#3b82f6',this)"></div>
+                  <div class="color-swatch" style="background:#ef4444;" data-color="#ef4444" onclick="selectColor('#ef4444',this)"></div>
+                  <div class="color-swatch" style="background:#10b981;" data-color="#10b981" onclick="selectColor('#10b981',this)"></div>
+                  <div class="color-swatch" style="background:#8b5cf6;" data-color="#8b5cf6" onclick="selectColor('#8b5cf6',this)"></div>
+                  <div class="color-swatch" style="background:#f97316;" data-color="#f97316" onclick="selectColor('#f97316',this)"></div>
+                  <div class="color-swatch" style="background:#1a1a1a;border:1px solid rgba(255,255,255,0.2);" data-color="#1a1a1a" onclick="selectColor('#1a1a1a',this)"></div>
+                </div>
+                <input type="color" id="f-color" value="#fbe24a" oninput="selectColorCustom(this.value)" class="color-custom">
+              </div>
+            </div>
+            <div class="field">
+              <div class="field-label">Begrüßungstext</div>
+              <textarea id="f-greeting" placeholder="Guten Tag! Ich bin Sophie, Ihre digitale Assistentin von Mustermann SHK. Wie kann ich Ihnen helfen?" oninput="updatePreview()" rows="3"></textarea>
+            </div>
+            <div class="form-nav">
+              <button class="btn-back" onclick="goSection(2)">← Zurück</button>
+              <button class="btn-next" onclick="goSection(4)">Weiter — Plattform →</button>
+            </div>
+          </div>
+
+          <!-- SECTION 4 -->
+          <div class="section" id="sec4">
+            <div class="section-eye">Schritt 04</div>
+            <div class="section-title">Website-Plattform</div>
+            <div class="section-sub">Wo wird der Bot eingebunden? Wir schicken die passende Anleitung mit.</div>
+            <div class="platform-grid" id="platform-grid">
+              <label class="platform-item selected" onclick="selectPlatform(this)"><input type="radio" name="platform" value="WordPress" checked><span class="platform-icon">🔵</span><span class="platform-name">WordPress</span></label>
+              <label class="platform-item" onclick="selectPlatform(this)"><input type="radio" name="platform" value="Shopify"><span class="platform-icon">🟢</span><span class="platform-name">Shopify</span></label>
+              <label class="platform-item" onclick="selectPlatform(this)"><input type="radio" name="platform" value="Wix"><span class="platform-icon">⚫</span><span class="platform-name">Wix</span></label>
+              <label class="platform-item" onclick="selectPlatform(this)"><input type="radio" name="platform" value="Squarespace"><span class="platform-icon">⬛</span><span class="platform-name">Squarespace</span></label>
+              <label class="platform-item" onclick="selectPlatform(this)"><input type="radio" name="platform" value="Jimdo"><span class="platform-icon">🔴</span><span class="platform-name">Jimdo</span></label>
+              <label class="platform-item" onclick="selectPlatform(this)"><input type="radio" name="platform" value="Eigene"><span class="platform-icon">⚙️</span><span class="platform-name">Eigene Website</span></label>
+            </div>
+            <div class="form-nav">
+              <button class="btn-back" onclick="goSection(3)">← Zurück</button>
+              <button class="btn-next" onclick="goSection(5)">Weiter — FAQs →</button>
+            </div>
+          </div>
+
+          <!-- SECTION 5 -->
+          <div class="section" id="sec5">
+            <div class="section-eye">Schritt 05</div>
+            <div class="section-title">Häufige Fragen</div>
+            <div class="section-sub">Was der Assistent automatisch beantworten soll. Mind. 3, max. 10.</div>
+            <div class="faq-list" id="faq-list"></div>
+            <button class="faq-add-btn" onclick="addFaq()" id="faq-add-btn">+ Frage hinzufügen</button>
+            <div class="form-nav">
+              <button class="btn-back" onclick="goSection(4)">← Zurück</button>
+              <button class="btn-next" onclick="goSection(6)">Weiter — Bestätigung →</button>
+            </div>
+          </div>
+
+          <!-- SECTION 6 -->
+          <div class="section" id="sec6">
+            <div class="section-eye">Schritt 06</div>
+            <div class="section-title">Rechtliche Bestätigung</div>
+            <div class="section-sub">Pflichtangaben gemäß DSGVO — ohne diese kann kein Code generiert werden.</div>
+            <div class="review-list" id="review-list"></div>
+            <label class="checkbox-item" id="cb1-wrap" onclick="toggleCheck('cb1')">
+              <input type="checkbox" id="cb1">
+              <div class="checkbox-box"></div>
+              <div class="checkbox-text">Ich habe die <a href="datenschutz.html">Datenschutzerklärung</a> gelesen und stimme der Verarbeitung meiner Daten gemäß DSGVO zu. <span style="color:var(--red);font-size:11px;">*</span></div>
+            </label>
+            <label class="checkbox-item" id="cb2-wrap" onclick="toggleCheck('cb2')">
+              <input type="checkbox" id="cb2">
+              <div class="checkbox-box"></div>
+              <div class="checkbox-text">Ich bestätige den Abschluss eines Auftragsverarbeitungsvertrags (AVV) gemäß Art. 28 DSGVO mit JAYAMO AI. <span style="color:var(--red);font-size:11px;">*</span></div>
+            </label>
+            <label class="checkbox-item" id="cb3-wrap" onclick="toggleCheck('cb3')">
+              <input type="checkbox" id="cb3">
+              <div class="checkbox-box"></div>
+              <div class="checkbox-text">Ich habe die <a href="agb.html">AGB</a> gelesen und akzeptiere die Nutzungsbedingungen. <span style="color:var(--red);font-size:11px;">*</span></div>
+            </label>
+            <div class="form-nav">
+              <button class="btn-back" onclick="goSection(5)">← Zurück</button>
+              <button class="btn-generate" onclick="generateCode()">⚡ Code generieren</button>
+            </div>
+          </div>
+
+          <div class="success-state" id="success-state">
+            <span class="suc-icon">✓</span>
+            <div class="suc-title">Code ist fertig.</div>
+            <div class="suc-sub">Der Einbettungscode wurde generiert. Kopiere ihn über den Tab "Code" und binde ihn auf deiner Website ein.</div>
+            <button class="suc-btn" onclick="resetForm()">Neuen Bot konfigurieren</button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RECHTE SPALTE: PREVIEW -->
+      <div class="panel" style="position:sticky;top:72px;">
+        <div class="panel-header">
+          <div class="panel-title"><div class="panel-title-dot"></div>Live-Vorschau</div>
+        </div>
+        <div class="preview-tabs">
+          <button class="preview-tab active" onclick="switchTab('chat',this)">Chat</button>
+          <button class="preview-tab" onclick="switchTab('code',this)">Code</button>
+          <button class="preview-tab" onclick="switchTab('email',this)">E-Mail</button>
+        </div>
+        <div class="chat-preview" id="tab-chat">
+          <div class="chat-mock">
+            <div class="chat-mock-header">
+              <div class="mock-avatar" id="prev-avatar" style="background:#fbe24a;">🔧</div>
+              <div><div class="mock-name" id="prev-name">Sophie — Mustermann SHK</div><div class="mock-status">Online</div></div>
+            </div>
+            <div class="chat-mock-body">
+              <div class="mock-msg bot"><div class="mock-bubble" id="prev-greeting">Guten Tag! Wie kann ich helfen?</div></div>
+              <div class="mock-msg user"><div class="mock-bubble" id="prev-user-bubble" style="background:#fbe24a;">Ich habe einen Rohrbruch!</div></div>
+              <div class="mock-msg bot"><div class="mock-bubble">Das klingt dringend — ich leite Sie sofort weiter.</div></div>
+            </div>
+            <div class="chat-mock-input">
+              <div class="mock-input-field">Schreiben Sie Ihre Anfrage...</div>
+              <div class="mock-send" id="prev-send-btn" style="background:#fbe24a;">→</div>
+            </div>
+          </div>
+        </div>
+        <div class="code-view" id="tab-code">
+          <div class="code-block" id="code-output">← Fülle das Formular aus und klicke "Code generieren"</div>
+          <div class="code-actions">
+            <button class="code-btn copy" onclick="copyCode()">Code kopieren</button>
+            <button class="code-btn dl" onclick="downloadCode()">Herunterladen</button>
+          </div>
+          <div class="copy-ok" id="copy-ok">✓ Kopiert!</div>
+        </div>
+        <div class="email-view" id="tab-email">
+          <div class="email-card">
+            <div class="email-subject" id="email-subject">Betreff: Ihr JAYAMO AI Code ist bereit</div>
+            <div class="email-body" id="email-body">← Konfiguration abschließen</div>
+          </div>
+          <div class="email-actions">
+            <button class="email-btn copy" onclick="copyEmail()">E-Mail kopieren</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta-sec">
+  <h2>Vier Wochen.<br>Null Risiko.</h2>
+  <p>Testen. Messen. Dann entscheiden — auf Basis Ihrer eigenen Zahlen.</p>
+  <a class="btn-p" href="#antrag">Jetzt kostenlos starten</a>
+  <p class="cta-note">Kein Abo · Kein Verkaufsdruck · Monatlich kündbar</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>
+    JAYAMO AI · ein Service von JAYAMO AI · DSGVO · Server in Deutschland · © 2026<br>
+    <a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a> · <a href="agb.html">AGB</a>
+  </p>
+</footer>
+
+<script>
+function goStep(n) {
+  var steps = document.querySelectorAll('.f-step');
+  for (var i = 0; i < steps.length; i++) {
+    steps[i].classList.remove('active');
+  }
+  document.getElementById('fstep' + n).classList.add('active');
+  var pct = Math.round((n / 4) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = 'Schritt ' + n + ' von 4';
+  document.getElementById('prog-pct').textContent = pct + ' %';
+}
+
+function submitForm() {
+  var name    = document.getElementById('f-name').value.trim();
+  var company = document.getElementById('f-company').value.trim();
+  var email   = document.getElementById('f-email').value.trim();
+  var phone   = document.getElementById('f-phone').value.trim();
+
+  if (!name || !email) {
+    alert('Bitte Name und E-Mail ausfüllen.');
+    return;
+  }
+
+  var gewerk  = document.querySelector('input[name="gewerk"]:checked');
+  var pain    = document.querySelector('input[name="pain"]:checked');
+  var ziel    = document.querySelector('input[name="ziel"]:checked');
+  var btn     = document.getElementById('submit-form');
+  btn.textContent = 'Wird gesendet…';
+  btn.style.opacity = '0.6';
+
+  fetch('https://anfragen-contact.javichumartin1975.workers.dev', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name: name,
+      company: company,
+      email: email,
+      phone: phone,
+      gewerk: gewerk ? gewerk.value : '-',
+      zeitfresser: pain ? pain.value : '-',
+      ziel: ziel ? ziel.value : '-'
+    })
+  }).then(function(res) {
+    if (res.ok) {
+      var els = document.querySelectorAll('.f-step, .form-head');
+      for (var i = 0; i < els.length; i++) { els[i].style.display = 'none'; }
+      document.getElementById('f-success').classList.add('active');
+    } else {
+      btn.textContent = 'Antrag absenden →';
+      btn.style.opacity = '1';
+      alert('Fehler. Bitte erneut versuchen.');
+    }
+  }).catch(function() {
+    btn.textContent = 'Antrag absenden →';
+    btn.style.opacity = '1';
+    alert('Verbindungsfehler.');
+  });
+}
+
+
+// KONFIGURATOR
+
+
+
+// STATE
+var state = {
+  betrieb:'',inhaber:'',email:'',tel:'',website:'',adresse:'',ustid:'',
+  gewerk:'SHK',region:'',zeiten:'',notfall:'',sprache:'Deutsch',
+  botname:'Klaus',color:'#fbe24a',greeting:'',
+  platform:'WordPress',
+  faqs:[],
+  code:''
+};
+var currentSection = 1;
+var faqCount = 0;
+
+var sectionLabels = ['Betrieb & Kontakt','Gewerk & Einsatz','Bot-Persönlichkeit','Plattform','FAQs','Bestätigung'];
+
+// INIT
+window.addEventListener('DOMContentLoaded', function(){
+  var defaults = [
+    {q:'Was kostet eine Heizungswartung?', a:'Die Kosten hängen vom Aufwand ab — schildern Sie mir kurz was ansteht, dann geben wir Ihnen eine ehrliche Einschätzung.'},
+    {q:'Wie schnell können Sie kommen?', a:'Bei Notfällen sind wir in der Regel innerhalb von 2–4 Stunden vor Ort. Für Terminarbeiten vereinbaren wir gemeinsam einen passenden Termin.'},
+    {q:'Machen Sie auch Notdienst?', a:'Ja, wir haben einen 24/7-Notdienst für dringende Fälle wie Rohrbruch oder Heizungsausfall im Winter.'}
+  ];
+  defaults.forEach(function(d){ addFaqItem(d.q, d.a); });
+  document.getElementById('tab-code').style.display='none';
+  document.getElementById('tab-email').style.display='none';
+});
+
+// NAVIGATION
+function goSection(n){
+  document.getElementById('sec'+currentSection).classList.remove('active');
+  document.getElementById('ps'+currentSection).classList.remove('active');
+  document.getElementById('ps'+currentSection).classList.add('done');
+  currentSection = n;
+  document.getElementById('sec'+n).classList.add('active');
+  document.getElementById('ps'+n).classList.add('active');
+  document.getElementById('ps'+n).classList.remove('done');
+  document.getElementById('step-counter').textContent = '0'+n+' / 06';
+  document.getElementById('prog-label').textContent = sectionLabels[n-1];
+  document.getElementById('prog-pct').textContent = Math.round((n/6)*100)+'%';
+  if(n===6) buildReview();
+  updatePreview();
+}
+
+// COLOR
+function selectColor(c,el){
+  state.color=c;
+  document.querySelectorAll('.color-swatch').forEach(function(s){s.classList.remove('selected');s.textContent='';});
+  el.classList.add('selected'); el.textContent='✓';
+  document.getElementById('f-color').value=c;
+  updatePreview();
+}
+function selectColorCustom(c){
+  state.color=c;
+  document.querySelectorAll('.color-swatch').forEach(function(s){s.classList.remove('selected');s.textContent='';});
+  updatePreview();
+}
+
+// PLATFORM
+function selectPlatform(el){
+  document.querySelectorAll('.platform-item').forEach(function(p){p.classList.remove('selected');});
+  el.classList.add('selected');
+  state.platform = el.querySelector('input').value;
+}
+
+// CHECKBOX
+function toggleCheck(id){
+  var cb=document.getElementById(id);
+  var wrap=document.getElementById(id+'-wrap');
+  cb.checked=!cb.checked;
+  if(cb.checked){wrap.classList.add('checked');}
+  else{wrap.classList.remove('checked');}
+}
+
+// FAQ
+function addFaqItem(q,a){
+  faqCount++;
+  var id=faqCount;
+  var list=document.getElementById('faq-list');
+  var div=document.createElement('div');
+  div.className='faq-item'; div.id='faq-'+id;
+  div.innerHTML='<div class="faq-item-head"><span class="faq-n">FAQ '+String(id).padStart(2,'0')+'</span><button class="faq-remove" onclick="removeFaq('+id+')">×</button></div><input type="text" placeholder="Frage des Kunden..." value="'+esc(q||'')+'" oninput="updateFaqs()"><textarea rows="2" placeholder="Antwort des Bots...">'+esc(a||'')+'</textarea>';
+  list.appendChild(div);
+  updateFaqs();
+  if(faqCount>=10) document.getElementById('faq-add-btn').style.display='none';
+}
+function addFaq(){ addFaqItem('',''); }
+function removeFaq(id){ var el=document.getElementById('faq-'+id); if(el) el.remove(); updateFaqs(); if(faqCount<10) document.getElementById('faq-add-btn').style.display=''; }
+function updateFaqs(){
+  state.faqs=[];
+  document.querySelectorAll('.faq-item').forEach(function(item){
+    var inputs=item.querySelectorAll('input,textarea');
+    if(inputs[0]&&inputs[1]) state.faqs.push({q:inputs[0].value.trim(),a:inputs[1].value.trim()});
+  });
+}
+function esc(s){ return (s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escJs(s){ return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,'\\n'); }
+function isLight(hex){ var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16); return (r*0.299+g*0.587+b*0.114)>160; }
+
+// PREVIEW UPDATE
+function updatePreview(){
+  state.betrieb=(document.getElementById('f-betrieb')||{}).value||'';
+  state.gewerk=(document.getElementById('f-gewerk')||{}).value||'SHK';
+  state.region=(document.getElementById('f-region')||{}).value||'';
+  state.tel=(document.getElementById('f-tel')||{}).value||'';
+  state.notfall=(document.getElementById('f-notfall')||{}).value||'';
+  state.botname=(document.getElementById('f-botname')||{}).value||'Klaus';
+  state.greeting=(document.getElementById('f-greeting')||{}).value||'';
+  state.color=document.getElementById('f-color').value||'#fbe24a';
+
+  var b=state.betrieb||'Mustermann SHK GmbH';
+  var n=state.botname||'Klaus';
+  var g=state.greeting||'Guten Tag! Ich bin '+n+', der digitale Assistent von '+b+'. Wie kann ich Ihnen helfen?';
+  var c=state.color;
+  var tc=isLight(c)?'#0a0a0a':'#ffffff';
+
+  document.getElementById('prev-name').textContent=n+' — '+b;
+  document.getElementById('prev-greeting').textContent=g;
+  document.getElementById('prev-avatar').style.background=c;
+  document.getElementById('prev-avatar').style.color=tc;
+  document.getElementById('prev-user-bubble').style.background=c;
+  document.getElementById('prev-user-bubble').style.color=tc;
+  document.getElementById('prev-send-btn').style.background=c;
+  document.getElementById('prev-send-btn').style.color=tc;
+}
+
+// REVIEW
+function buildReview(){
+  updateFaqs();
+  var b=state.betrieb||(document.getElementById('f-betrieb')||{}).value||'—';
+  var items=[
+    {k:'Betrieb', v:b||'—'},
+    {k:'Gewerk', v:(document.getElementById('f-gewerk')||{}).value||'—'},
+    {k:'Region', v:(document.getElementById('f-region')||{}).value||'—'},
+    {k:'Bot-Name', v:(document.getElementById('f-botname')||{}).value||'Klaus'},
+    {k:'Plattform', v:state.platform||'WordPress'},
+    {k:'FAQs', v:state.faqs.length+' konfiguriert'},
+    {k:'Sprache', v:(document.getElementById('f-sprache')||{}).value||'Deutsch'}
+  ];
+  document.getElementById('review-list').innerHTML=items.map(function(i){
+    return '<div class="review-item"><div class="review-dot"></div><span class="review-key">'+i.k+'</span><span>'+i.v+'</span></div>';
+  }).join('');
+}
+
+// GENERATE
+function generateCode(){
+  if(!document.getElementById('cb1').checked||!document.getElementById('cb2').checked||!document.getElementById('cb3').checked){
+    alert('Bitte alle Pflichtfelder bestätigen.');return;
+  }
+  updateFaqs();
+  var b=(document.getElementById('f-betrieb')||{}).value||'Handwerksbetrieb';
+  var gw=(document.getElementById('f-gewerk')||{}).value||'SHK';
+  var r=(document.getElementById('f-region')||{}).value||'Ihrer Region';
+  var t=(document.getElementById('f-tel')||{}).value||'';
+  var nf=(document.getElementById('f-notfall')||{}).value||'';
+  var w=(document.getElementById('f-website')||{}).value||'';
+  var n=(document.getElementById('f-botname')||{}).value||'Klaus';
+  var gr=(document.getElementById('f-greeting')||{}).value||'Guten Tag! Ich bin '+n+', der digitale Assistent von '+b+'. Wie kann ich Ihnen helfen?';
+  var c=state.color;
+  var tc=isLight(c)?'#0a0a0a':'#ffffff';
+  var z=(document.getElementById('f-zeiten')||{}).value||'';
+  var sp=(document.getElementById('f-sprache')||{}).value||'Deutsch';
+
+  var faqStr=state.faqs.filter(function(f){return f.q&&f.a;}).map(function(f){return 'F: '+escJs(f.q)+' → A: '+escJs(f.a);}).join('\\n');
+
+  var systemPrompt='Du bist '+escJs(n)+', der digitale Assistent von '+escJs(b)+' ('+escJs(gw)+', Einsatzgebiet: '+escJs(r)+').\\n\\n'
+    +'Qualifiziere Anfragen in max. 3 Sätzen. Frage nach: Problem, Dringlichkeit, PLZ, Name.\\n'
+    +'NOTFALL (Rohrbruch, Heizungsausfall, Gasgeruch): sofort priorisieren'+(nf?', Notfallnummer '+escJs(nf)+' nennen':'')+'.\\n'
+    +'PLANAUFTRAG: Termin anbieten.\\n'
+    +'PREISFRAGE: Aufwand erfragen.\\n'
+    +(z?'Öffnungszeiten: '+escJs(z)+'\\n':'')
+    +(w?'Website: '+escJs(w)+'\\n':'')
+    +'FAQ:\\n'+faqStr+'\\n\\n'
+    +'Antworte auf '+escJs(sp)+'. Du bist '+escJs(n)+' von '+escJs(b)+'.';
+
+  var code = '<!-- JAYAMO AI Widget · '+b+' · JAYAMO AI -->\n'
+    +'<!-- Einfügen direkt vor </body> -->\n'
+    +'<script>\n'
+    +'(function(){\n'
+    +"  var P='"+c+"',T='"+tc+"',N='"+escJs(n)+"',G='"+escJs(gr)+"',S='"+systemPrompt+"';\n"
+    +'  var H=[],open=false;\n'
+    +'  var style=document.createElement("style");\n'
+    +'  style.textContent=[\n'
+    +'    "#aw-btn{position:fixed;bottom:24px;right:24px;width:56px;height:56px;border-radius:50%;background:"+P+";border:none;cursor:pointer;box-shadow:0 4px 24px rgba(0,0,0,0.25);z-index:9999;font-size:22px;color:"+T+";transition:transform .2s;}",\n'
+    +'    "#aw-btn:hover{transform:scale(1.08);}",\n'
+    +'    "#aw-box{display:none;position:fixed;bottom:92px;right:24px;width:340px;max-height:520px;background:#0d0d14;border:1px solid rgba(255,255,255,0.1);border-radius:16px;box-shadow:0 24px 64px rgba(0,0,0,0.5);z-index:9998;flex-direction:column;overflow:hidden;}",\n'
+    +'    "#aw-box.open{display:flex;}",\n'
+    +'    "#aw-head{padding:14px 16px;background:#13131e;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:10px;}",\n'
+    +'    "#aw-av{width:32px;height:32px;border-radius:8px;background:"+P+";display:flex;align-items:center;justify-content:center;font-size:14px;color:"+T+";}",\n'
+    +'    "#aw-hn{font-size:13px;font-weight:600;color:#f0f0f8;}",\n'
+    +'    "#aw-hs{font-size:10px;color:#3ddc84;display:flex;align-items:center;gap:4px;}",\n'
+    +'    "#aw-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px;}",\n'
+    +'    ".aw-b{align-self:flex-start;max-width:85%;}",\n'
+    +'    ".aw-u{align-self:flex-end;max-width:85%;}",\n'
+    +'    ".aw-bb{padding:9px 13px;border-radius:10px;font-size:13px;line-height:1.5;}",\n'
+    +'    ".aw-b .aw-bb{background:#1a1a28;border:.5px solid rgba(255,255,255,.08);color:#c8c8e0;}",\n'
+    +'    ".aw-u .aw-bb{background:"+P+";color:"+T+";font-weight:500;}",\n'
+    +'    ".aw-dots{display:flex;gap:3px;padding:4px 0;}",\n'
+    +'    ".aw-dots span{width:5px;height:5px;border-radius:50%;background:#55556a;animation:awb 1.2s infinite;}",\n'
+    +'    ".aw-dots span:nth-child(2){animation-delay:.2s}.aw-dots span:nth-child(3){animation-delay:.4s}",\n'
+    +'    "@keyframes awb{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}",\n'
+    +'    "#aw-inp{padding:10px 12px;border-top:1px solid rgba(255,255,255,.07);display:flex;gap:7px;background:#13131e;}",\n'
+    +'    "#aw-input{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:9px 12px;color:#f0f0f8;font-size:13px;outline:none;}",\n'
+    +'    "#aw-send{background:"+P+";color:"+T+";border:none;border-radius:8px;padding:9px 14px;font-size:12px;font-weight:700;cursor:pointer;}",\n'
+    +'    "@media(max-width:400px){#aw-box{width:calc(100vw - 32px);right:16px;}}"\n'
+    +'  ].join("");\n'
+    +'  document.head.appendChild(style);\n'
+    +'  var w=document.createElement("div");\n'
+    +'  w.innerHTML=\'<button id="aw-btn" onclick="awT()">💬</button><div id="aw-box"><div id="aw-head"><div id="aw-av">🔧</div><div><div id="aw-hn">\'+N+\'</div><div id="aw-hs">● Online</div></div></div><div id="aw-msgs"></div><div id="aw-inp"><input id="aw-input" placeholder="Ihre Anfrage..." onkeydown="if(event.key===chr(39)Enter chr(39))awS()"><button id="aw-send" onclick="awS()">→</button></div></div>\';\n'
+    +'  w.innerHTML=w.innerHTML.replace(/chr\\(39\\)/g,"\'");\n'
+    +'  document.body.appendChild(w);\n'
+    +'  setTimeout(function(){awB(G);},400);\n'
+    +'  window.awT=function(){open=!open;document.getElementById("aw-box").className=open?"open":"";document.getElementById("aw-btn").textContent=open?"✕":"💬";};\n'
+    +'  window.awB=function(t){var m=document.getElementById("aw-msgs");var d=document.createElement("div");d.className="aw-b";d.innerHTML=\'<div class="aw-bb">\'+t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")+"</div>";m.appendChild(d);m.scrollTop=m.scrollHeight;};\n'
+    +'  window.awS=async function(){var inp=document.getElementById("aw-input");var txt=inp.value.trim();if(!txt||window._awL)return;inp.value="";var msgs=document.getElementById("aw-msgs");var ud=document.createElement("div");ud.className="aw-u";ud.innerHTML=\'<div class="aw-bb">\'+txt.replace(/&/g,"&amp;").replace(/</g,"&lt;")+"</div>";msgs.appendChild(ud);msgs.scrollTop=msgs.scrollHeight;H.push({role:"user",content:txt});window._awL=true;var td=document.createElement("div");td.className="aw-b";td.id="aw-ty";td.innerHTML=\'<div class="aw-bb"><div class="aw-dots"><span></span><span></span><span></span></div></div>\';msgs.appendChild(td);msgs.scrollTop=msgs.scrollHeight;try{var r=await fetch("https://anfragen-chat.javichumartin1975.workers.dev",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:H,system:S})});var data=await r.json();var reply=data.reply||"Entschuldigung — kurzer Fehler.";var ty=document.getElementById("aw-ty");if(ty)ty.remove();awB(reply);H.push({role:"assistant",content:reply});}catch(e){var ty=document.getElementById("aw-ty");if(ty)ty.remove();awB("Verbindungsfehler.");}window._awL=false;};\n'
+    +'})();\n'
+    +'<\/script>\n'
+    +'<!-- Ende JAYAMO AI Widget -->';
+
+  state.code = code;
+  document.getElementById('code-output').textContent = code;
+  generateEmail(b,n);
+  switchTab('code', document.querySelectorAll('.preview-tab')[1]);
+  document.getElementById('sec6').classList.remove('active');
+  document.getElementById('success-state').classList.add('active');
+}
+
+function generateEmail(b,n){
+  var inh=(document.getElementById('f-inhaber')||{}).value||'';
+  var pl=state.platform||'WordPress';
+  var anleitungen={'WordPress':'Gehen Sie in WordPress zu Design → Theme-Editor oder einem Plugin wie "Insert Headers and Footers" und fügen Sie den Code vor dem </body>-Tag ein.','Shopify':'Gehen Sie in Shopify zu Online Store → Themes → Edit Code und fügen Sie den Code in der theme.liquid vor </body> ein.','Wix':'Gehen Sie in Wix zu Settings → Custom Code und fügen Sie den Code im Bereich "Body - end" ein.','Squarespace':'Gehen Sie zu Settings → Advanced → Code Injection und fügen Sie den Code im Footer-Bereich ein.','Jimdo':'Gehen Sie zu Settings → HTML & Scripts und fügen Sie den Code im Footer ein.','Eigene':'Fügen Sie den Code direkt vor dem schließenden </body>-Tag in Ihrer HTML-Datei ein.'};
+
+  var body='Guten Tag'+(inh?' '+inh.split(' ')[0]:'')+',\n\n'
+    +'Ihr persönlicher Anfragen-Assistent "'+n+'" ist fertig konfiguriert.\n\n'
+    +'EINBINDUNG AUF IHRER WEBSITE ('+pl+'):\n'
+    +(anleitungen[pl]||anleitungen['Eigene'])+'\n\n'
+    +'Was der Assistent für Sie erledigt:\n'
+    +'✓ Anfragen 24/7 entgegennehmen\n'
+    +'✓ Notfälle sofort priorisieren\n'
+    +'✓ Kundendaten strukturiert erfassen\n'
+    +'✓ Häufige Fragen automatisch beantworten\n\n'
+    +'Den Einbettungscode finden Sie im Konfigurator unter dem Tab "Code".\n\n'
+    +'Bei Fragen stehe ich Ihnen gerne zur Verfügung.\n\n'
+    +'Javier San José Martin\n'
+    +'JAYAMO AI — JAYAMO AI\n'
+    +'jayamoautomation@gmail.com\n'
+    +'+49 177 839 3026';
+
+  document.getElementById('email-subject').textContent='Betreff: Ihr JAYAMO AI Assistent "'+n+'" ist bereit';
+  document.getElementById('email-body').textContent=body;
+  window._emailText='Betreff: Ihr JAYAMO AI Assistent "'+n+'" ist bereit\n\n'+body;
+}
+
+// TABS
+function switchTab(tab,el){
+  document.querySelectorAll('.preview-tab').forEach(function(t){t.classList.remove('active');});
+  el.classList.add('active');
+  document.getElementById('tab-chat').style.display=tab==='chat'?'block':'none';
+  document.getElementById('tab-code').style.display=tab==='code'?'block':'none';
+  document.getElementById('tab-email').style.display=tab==='email'?'block':'none';
+}
+
+function copyCode(){ if(!state.code){alert('Erst Code generieren.');return;} navigator.clipboard.writeText(state.code).then(function(){var s=document.getElementById('copy-ok');s.style.display='block';setTimeout(function(){s.style.display='none';},2500);}); }
+function downloadCode(){ if(!state.code){alert('Erst Code generieren.');return;} var b=(state.betrieb||'jayamo-ai').replace(/\s+/g,'-').toLowerCase(); var blob=new Blob([state.code],{type:'text/html'}); var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=b+'-widget.html'; a.click(); }
+function copyEmail(){ if(!window._emailText){alert('Erst Code generieren.');return;} navigator.clipboard.writeText(window._emailText).then(function(){alert('E-Mail-Text kopiert!');}); }
+function resetForm(){ document.getElementById('success-state').classList.remove('active'); document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');}); document.querySelectorAll('.progress-step').forEach(function(d){d.classList.remove('active','done');}); currentSection=1; document.getElementById('sec1').classList.add('active'); document.getElementById('ps1').classList.add('active'); document.getElementById('step-counter').textContent='01 / 06'; document.getElementById('prog-label').textContent='Betrieb & Kontakt'; document.getElementById('prog-pct').textContent='17%'; switchTab('chat',document.querySelectorAll('.preview-tab')[0]); }
+
+
+</script>
+</body>
+</html>
